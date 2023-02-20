@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "SubtextPictureGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7164",
+      "launchBrowser": false
+    }
+  }
+}
