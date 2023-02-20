@@ -7,29 +7,65 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SubtextPictureGenerator.Model;
+using System.Net.Http;
 
 namespace SubtextPictureGenerator
 {
     public static class ScrapeSubtextData
     {
-        [FunctionName("ScrapeSubtextData")]
+        static HttpClient client = new HttpClient();
+
+        [FunctionName("scrape")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
+            #region Process Request
 
+            string url = req.Query["url"];
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            dynamic body = JsonConvert.DeserializeObject(requestBody);
+            url ??= body?.url;
 
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
+            if (url == null)
+            {
+                return new BadRequestObjectResult("Please provide a url of a Subtext article either in the query params or the request body");
+            }
 
-            return new OkObjectResult(responseMessage);
+            log.LogInformation("got url from message: " + url);
+
+            #endregion
+
+            #region Scrape Subtext
+
+
+            Article article = new Article(url);
+
+
+
+            //article.headline = "test";
+            //article.date = "08.05.2099";
+            //article.picture = new Picture("base64string", "pictureAuthor1");
+            //article.tag = "Testtag";
+            //return new OkObjectResult(article);
+
+            try
+            {
+                article.ScrapeArticleFromHtml(await client.GetStringAsync(article.url));
+            }
+            catch (HttpRequestException e)
+            {
+                log.LogError(e, "Exceptin while scraping/Getting raw HTML");
+                return new NotFoundObjectResult("The Article could not be scraped. Check if you specified the right url");
+            }
+
+            #endregion
+            return new OkObjectResult(article);
+
+
         }
     }
 }
