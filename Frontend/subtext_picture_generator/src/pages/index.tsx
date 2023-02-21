@@ -14,7 +14,7 @@ export default function Home() {
     <>
       <Head>
         <title>Subtext Picture Generator</title>
-        <meta name="description" content="Renders a image based on a Subtext article link, to fasten the process of creating a standardized social media auftritt appearance" />
+        <meta name="description" content="Renders a image based on a Subtext article link, to fasten the process of creating a standardized social media appearance" />
         <meta name="viewport" content="width=1024" />
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
