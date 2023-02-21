@@ -14,7 +14,7 @@ namespace SubtextPictureGenerator.Model
 
         public string title;
 
-        public List<string> category = new List<string>();
+        public List<string> categories = new List<string>();
 
         public string author;
 
@@ -39,7 +39,7 @@ namespace SubtextPictureGenerator.Model
 
             date = mainarticle.QuerySelector(".qodef-e-info-date")?.InnerText.Trim().Replace("\t", "");
             author = mainarticle.QuerySelector(".qodef-e-info-author")?.InnerText.Trim().Replace("\t", "");
-            category.AddRange(mainarticle.QuerySelector(".qodef-e-info-category")?.QuerySelectorAll("a")?.Select((e) => e.InnerText.Trim().Replace("\t", "")));
+            categories.AddRange(mainarticle.QuerySelector(".qodef-e-info-category")?.QuerySelectorAll("a")?.Select((e) => e.InnerText.Trim().Replace("\t", "")));
             title = mainarticle.QuerySelector(".qodef-e-title")?.InnerText.Trim().Replace("\t", "");
             picture = new Picture();
             picture.link = mainarticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-lazy-src"].Value;

@@ -30,7 +30,7 @@ namespace SubtextPictureGenerator
             dynamic body = JsonConvert.DeserializeObject(requestBody);
             url ??= body?.url;
 
-            if (url == null)
+            if (url == null || url.Trim() == "")
             {
                 return new BadRequestObjectResult("Please provide a url of a Subtext article either in the query params or the request body");
             }
