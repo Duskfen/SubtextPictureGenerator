@@ -126,6 +126,8 @@ main .url-input-wrapper > *{
   aspect-ratio: 9/16;
   width: 500px;
   padding: 30px;
+  font-size: 11px;
+  position: relative;
 }
 
 #image-preview-border{
@@ -136,10 +138,69 @@ main .url-input-wrapper > *{
 }
 
 #image-preview img{
+  margin-top:30px;
   width: 440px;
   object-fit: contain;
 }
 
+#image-preview-heading{
+  text-align: right;
+}
+
+#image-preview-heading img{
+  width: 250px;
+}
+
+#image-preview-heading-seperator{
+  border-bottom: 1px solid black;
+  width: 500px;
+  position: relative;
+  left: -30px;
+  margin: 10px 0px 0px 0px;
+}
+
+#image-preview-sub-picture{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1em;
+}
+
+.image-preview-sub-picture-categories{
+  border: 1px solid black;
+  border-radius: 4em;
+  padding: 2.5px 10px;
+  margin-right: 10px;
+}
+
+#image-preview-sub-picture-credits{
+  text-align: right;
+  font-size: 9px;
+}
+
+#image-preview-link-arrow{
+  text-align: left;
+  margin-top: 50px;
+}
+
+#image-preview-link-arrow img{
+  width: 50px;
+  margin-left: 100px;
+}
+
+#image-preview-title{
+  margin-top: 50px;
+  text-align: left;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+#image-preview-footer{
+  position: absolute;
+  bottom: 80px;
+  text-align: left;
+  font-weight: 700;
+}
 
 @media (prefers-color-scheme: dark) {
   html {

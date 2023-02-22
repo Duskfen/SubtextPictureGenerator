@@ -45,12 +45,32 @@ export default function Home() {
             <div id="image-preview-container">
               <div id="image-preview-border">
                 <div id='image-preview' ref={imageRef}>
+                  <div id="image-preview-heading">
+                    <img src={"/img/subtext-logo.png"}></img>
+                    <div id="image-preview-heading-seperator"></div>
+                  </div>
                   <img src={article.picture.src} alt={"FirstImage"} />
-                  <p>{article.picture.author}</p>
-                  <p>{article.title?.toUpperCase()}</p>
-                  <p>{article.author}</p>
-                  <p>{article.date}</p>
-                  <p>{article.categories}</p>
+                  <div id="image-preview-sub-picture">
+                    <div>
+                      {article.categories?.map((item, i) => {
+                        return <div className='image-preview-sub-picture-categories'>
+                          {item?.toUpperCase()}
+                        </div>
+                      })}
+                    </div>
+                    <div id="image-preview-sub-picture-credits">
+                      {article.picture?.author}
+                    </div>
+                  </div>
+                  <div id="image-preview-link-arrow">
+                    <img src={"/img/arrows.png"}></img>
+                  </div>
+                  <div id="image-preview-title">
+                    <p>{article.title?.toUpperCase()}</p>
+                  </div>
+                  <div id='image-preview-footer'>
+                    <p>{article.date} / {article.author?.toUpperCase()}</p>
+                  </div>
                 </div>
               </div>
               <button onClick={async () => {
