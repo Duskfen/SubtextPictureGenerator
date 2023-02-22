@@ -165,6 +165,10 @@ main .url-input-wrapper > *{
   justify-content: space-between;
   margin-top: 1em;
 }
+#image-preview-sub-picture-categories-wrapper{
+  display: flex;
+
+}
 
 .image-preview-sub-picture-categories{
   border: 1px solid black;

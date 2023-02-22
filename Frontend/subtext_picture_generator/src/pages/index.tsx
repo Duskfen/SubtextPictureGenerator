@@ -51,7 +51,7 @@ export default function Home() {
                   </div>
                   <img src={article.picture.src} alt={"FirstImage"} />
                   <div id="image-preview-sub-picture">
-                    <div>
+                    <div id="image-preview-sub-picture-categories-wrapper">
                       {article.categories?.map((item, i) => {
                         return <div className='image-preview-sub-picture-categories'>
                           {item?.toUpperCase()}
