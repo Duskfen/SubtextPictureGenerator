@@ -149,7 +149,7 @@ main .url-input-wrapper > *{
 
 #image-preview-heading img{
   width: 250px;
-  margin:0;
+  /* margin:0; */
 }
 
 #image-preview-heading-seperator{
