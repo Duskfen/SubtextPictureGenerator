@@ -13,13 +13,11 @@
 
   --card-background: #dfe6e9;
 
-  --accent1: #15161F;
-  --on-accent1: #dfe6e9;
+  --main-color: #15161F;
+  --on-main-color: #dfe6e9;
 
-  --main-color: rgb(104, 117, 217);
-  --main-color-hover: rgb(104, 117, 217, 0.2);
+  --main-color-hover: #2a2b352f;
   --track-color: #ddd;
-  --mark-color: #aaaaaa;
 
 
 }
@@ -66,7 +64,7 @@ main > div{
 input,
 textarea {
   border: none;
-  border-bottom: 2px solid var(--accent1);
+  border-bottom: 2px solid var(--main-color);
   padding: 10px;
   margin-bottom: 20px;
   width: 50%;
@@ -100,7 +98,6 @@ button:hover {
 }
 
 main .input-wrapper{
-  margin: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,21 +117,21 @@ main .input-wrapper > *{
 
 #image-preview-container{
   padding: 50px;
-  background-color: var(--accent1);
-  color: var(--on-accent1);
+  background-color: var(--main-color);
+  color: var(--on-main-color);
   width: 100%;
 }
 
 #image-preview-container button{
-  background-color: var(--accent1);
-  color: var(--on-accent1);
-  border: 2px solid var(--on-accent1);
+  background-color: var(--main-color);
+  color: var(--on-main-color);
+  border: 2px solid var(--on-main-color);
 }
 
 #image-preview-container button:hover{
-  background-color: var(--on-accent1);
-  color: var(--accent1);
-  border: 2px solid var(--on-accent1);
+  background-color: var(--on-main-color);
+  color: var(--main-color);
+  border: 2px solid var(--on-main-color);
 }
 
 #image-preview{
@@ -151,7 +148,7 @@ main .input-wrapper > *{
   margin: auto;
   margin-bottom: 25px;
   aspect-ratio: 9/16;
-  border-radius: 5px;
+  border-radius: 12px;
   width: 520px;
   display: flex;
   justify-content: center;
@@ -218,7 +215,7 @@ main .input-wrapper > *{
 #image-preview-title{
   margin-top: 30px;
   text-align: left;
-  font-size: 30px;
+  /* font-size: 30px; */
   font-weight: 500;
 }
 
@@ -228,3 +225,20 @@ main .input-wrapper > *{
   text-align: left;
   font-weight: 500;
 }
+
+
+/* CONTROLS */
+.box{
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  margin: 30px;
+  text-align: left;
+  padding: 0px 20px 20px 20px;
+}
+
+.controls-box-headline{
+  position: relative;
+  top:-12px;
+  display: inline;
+  text-decoration: underline;
+}
+/* CONTROLS END */

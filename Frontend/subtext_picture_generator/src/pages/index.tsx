@@ -5,8 +5,6 @@ import { Picture } from 'subtextPictureGenerator/model/picture';
 import { toPng, toSvg } from 'html-to-image';
 import ReactSlider from "react-slider";
 
-import "./../styles/slider.css"
-
 import * as he from 'he';
 
 export default function Home() {
@@ -16,6 +14,7 @@ export default function Home() {
   const imageRef = useRef<HTMLDivElement>(null);
 
   const [imagePreviewScale, setImagePreviewScale] = useState<number>(1);
+  const [titleSize, setTitleSize] = useState<number>(30);
   return (
     <>
       <Head>
@@ -47,46 +46,48 @@ export default function Home() {
           <>
             <div id="article-loaded-container">
               <div id="controls">
-                <p>Some Controls SAMPLE</p>
-
-                <div className='input-wrapper'>
-                  <p>Preview-Scale (0,3 - 1):</p>
-                  <ReactSlider
-      className="customSlider"
-      thumbClassName="customSlider-thumb"
-      trackClassName="customSlider-track"
-      markClassName="customSlider-mark"
-      marks={0.1}
-      min={0.3}
-      max={1}
-      // defaultValue={1}
-      value={imagePreviewScale}
-      onChange={(newscale) => {
-        if(newscale && newscale >= 0.3 && newscale <= 1){
-          setImagePreviewScale(newscale)
-        }
-      }}
-      renderMark={(props) => {
-         if (props.key! < imagePreviewScale) {
-           props.className = "customSlider-mark customSlider-mark-before";
-         } else if (props.key === imagePreviewScale) {
-           props.className = "customSlider-mark customSlider-mark-active";
-         }
-         return <span {...props} />;
-      }}
-    />
-
-                  {/* <input placeholder={imagePreviewScale.toString()} max={1} min={0.3} step={0.1} type={'number'} onChange={(e) => {
-                    let newscale = parseFloat(e.target.value)
-                    console.log(newscale)
-                    if(newscale && newscale >= 0.3 && newscale <= 1){
-                      setImagePreviewScale(newscale)
-                    }
-                  }}></input> */}
+                <p>Options</p>
+                <div className="box">
+                  <p className='controls-box-headline'>General</p>
+                  <div className='input-wrapper'>
+                    <p>Preview-Scale: </p>
+                    <ReactSlider
+                      className="customSlider"
+                      thumbClassName="customSlider-thumb"
+                      trackClassName="customSlider-track"
+                      min={0.3}
+                      max={1}
+                      step={0.005}
+                      // defaultValue={1}
+                      value={imagePreviewScale}
+                      onChange={(newscale) => {
+                          setImagePreviewScale(newscale)
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="box">
+                  <p className='controls-box-headline'>Title</p>
+                  <div className='input-wrapper'>
+                    <p>Size: </p>
+                    <ReactSlider
+                      className="customSlider"
+                      thumbClassName="customSlider-thumb"
+                      trackClassName="customSlider-track"
+                      min={10}
+                      max={50}
+                      step={0.005}
+                      // defaultValue={1}
+                      value={titleSize}
+                      onChange={(newscale) => {
+                          setTitleSize(newscale)
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
               <div id="image-preview-container" >
-                
+
                 <div id="image-preview-border" style={{ scale: imagePreviewScale.toString() }}>
                   <div id='image-preview' ref={imageRef}>
                     <div id="image-preview-heading">
@@ -109,7 +110,7 @@ export default function Home() {
                     <div id="image-preview-link-arrow">
                       <img src={"/img/arrows.png"}></img>
                     </div>
-                    <div id="image-preview-title">
+                    <div id="image-preview-title" style={{fontSize: titleSize}}>
                       <p>{he.decode(article.title)?.toUpperCase()}</p>
                     </div>
                     <div id='image-preview-footer'>
