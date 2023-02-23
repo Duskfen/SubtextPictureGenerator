@@ -20,7 +20,7 @@ export default function Home() {
       <Head>
         <title>Subtext Picture Generator</title>
         <meta name="description" content="Renders a image based on a Subtext article link, to fasten the process of creating a standardized social media appearance" />
-        <meta name="viewport" content="width=1024" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <main>
@@ -45,47 +45,7 @@ export default function Home() {
           </div> :
           <>
             <div id="article-loaded-container">
-              <div id="controls">
-                <p>Options</p>
-                <div className="box">
-                  <p className='controls-box-headline'>General</p>
-                  <div className='input-wrapper'>
-                    <p>Preview-Scale: </p>
-                    <ReactSlider
-                      className="customSlider"
-                      thumbClassName="customSlider-thumb"
-                      trackClassName="customSlider-track"
-                      min={0.3}
-                      max={1}
-                      step={0.005}
-                      // defaultValue={1}
-                      value={imagePreviewScale}
-                      onChange={(newscale) => {
-                          setImagePreviewScale(newscale)
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="box">
-                  <p className='controls-box-headline'>Title</p>
-                  <div className='input-wrapper'>
-                    <p>Size: </p>
-                    <ReactSlider
-                      className="customSlider"
-                      thumbClassName="customSlider-thumb"
-                      trackClassName="customSlider-track"
-                      min={10}
-                      max={50}
-                      step={0.005}
-                      // defaultValue={1}
-                      value={titleSize}
-                      onChange={(newscale) => {
-                          setTitleSize(newscale)
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+
               <div id="image-preview-container" >
 
                 <div id="image-preview-border" style={{ scale: imagePreviewScale.toString() }}>
@@ -110,7 +70,7 @@ export default function Home() {
                     <div id="image-preview-link-arrow">
                       <img src={"/img/arrows.png"}></img>
                     </div>
-                    <div id="image-preview-title" style={{fontSize: titleSize}}>
+                    <div id="image-preview-title" style={{ fontSize: titleSize }}>
                       <p>{he.decode(article.title)?.toUpperCase()}</p>
                     </div>
                     <div id='image-preview-footer'>
@@ -136,6 +96,81 @@ export default function Home() {
                       })
                   }
                 }}>DOWNLOAD</button>
+              </div>
+              <div id="controls">
+                <div className="box">
+                  <p className='controls-box-headline'>General</p>
+                  <div>
+                    <div className='input-wrapper'>
+                      <p>Preview-Scale: </p>
+                      <ReactSlider
+                        className="customSlider"
+                        thumbClassName="customSlider-thumb"
+                        trackClassName="customSlider-track"
+                        min={0.3}
+                        max={1}
+                        step={0.005}
+                        // defaultValue={1}
+                        value={imagePreviewScale}
+                        onChange={(newscale) => {
+                          setImagePreviewScale(newscale)
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="box">
+                  <p className='controls-box-headline'>Title</p>
+                  <div>
+                    <div className='input-wrapper'>
+                      <p>Size: </p>
+                      <div>
+                        <div>
+                          <ReactSlider
+                            className="customSlider"
+                            thumbClassName="customSlider-thumb"
+                            trackClassName="customSlider-track"
+                            min={10}
+                            max={55}
+                            step={0.005}
+                            // defaultValue={1}F
+                            value={titleSize}
+                            onChange={(newscale) => {
+                              setTitleSize(newscale)
+                            }}
+                          />
+                        </div>
+                        <div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='input-wrapper'>
+                      <p>Size: </p>
+                      <div>
+                        <div>
+                          <ReactSlider
+                            className="customSlider"
+                            thumbClassName="customSlider-thumb"
+                            trackClassName="customSlider-track"
+                            min={10}
+                            max={55}
+                            step={0.005}
+                            // defaultValue={1}F
+                            value={titleSize}
+                            onChange={(newscale) => {
+                              setTitleSize(newscale)
+                            }}
+                          />
+                        </div>
+                        <div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
               </div>
             </div>
           </>
