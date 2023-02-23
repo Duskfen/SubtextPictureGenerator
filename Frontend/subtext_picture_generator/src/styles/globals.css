@@ -13,16 +13,15 @@
 
   --card-background: #dfe6e9;
 
-}
+  --accent1: #15161F;
+  --on-accent1: #dfe6e9;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 0, 0, 0;
-    
-    --card-background: #2d3436;
+  --main-color: rgb(104, 117, 217);
+  --main-color-hover: rgb(104, 117, 217, 0.2);
+  --track-color: #ddd;
+  --mark-color: #aaaaaa;
 
-  }
+
 }
 
 * {
@@ -57,18 +56,20 @@ main{
   max-width: 1920px;
   height: 100vh;
   text-align: center;
-  padding: 50px;
-  margin: auto;
+    margin: auto;
+}
+
+main > div{
+  padding:50px; 
 }
 
 input,
 textarea {
   border: none;
-  border: 1px solid #c1c1c1;
-  border-bottom: 2px solid #c1c1c1;
+  border-bottom: 2px solid var(--accent1);
   padding: 10px;
   margin-bottom: 20px;
-  width: 43%;
+  width: 50%;
   font-size: 16px;
   font-weight: 400;
 }
@@ -98,26 +99,42 @@ button:hover {
   color: rgb(var(--background-rgb));
 }
 
-main .url-input-wrapper{
+main .input-wrapper{
   margin: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-main .url-input-wrapper > *{
+main .input-wrapper > *{
   margin: 10px;
 }
 
 #article-loaded-container{
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 2fr;
   align-items: center;
   justify-content: space-evenly;
+  padding: 0;
 }
 
 #image-preview-container{
+  padding: 50px;
+  background-color: var(--accent1);
+  color: var(--on-accent1);
   width: 100%;
+}
+
+#image-preview-container button{
+  background-color: var(--accent1);
+  color: var(--on-accent1);
+  border: 2px solid var(--on-accent1);
+}
+
+#image-preview-container button:hover{
+  background-color: var(--on-accent1);
+  color: var(--accent1);
+  border: 2px solid var(--on-accent1);
 }
 
 #image-preview{
@@ -133,7 +150,12 @@ main .url-input-wrapper > *{
 #image-preview-border{
   margin: auto;
   margin-bottom: 25px;
-  width: 502px;
+  aspect-ratio: 9/16;
+  border-radius: 5px;
+  width: 520px;
+  display: flex;
+  justify-content: center;
+  background-color: white;
   border: 1px solid rgb(var(--foreground-rgb));
 }
 
@@ -205,10 +227,4 @@ main .url-input-wrapper > *{
   bottom: 80px;
   text-align: left;
   font-weight: 500;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }
