@@ -1,5 +1,6 @@
 .customSlider {
     width: 500px;
+    transition: 0;
   }
   
   .customSlider-track {
