@@ -126,7 +126,7 @@ main .url-input-wrapper > *{
   aspect-ratio: 9/16;
   width: 500px;
   padding: 30px;
-  font-size: 11px;
+  font-size: 14px;
   position: relative;
 }
 
@@ -185,7 +185,7 @@ main .url-input-wrapper > *{
 
 #image-preview-link-arrow{
   text-align: left;
-  margin-top: 50px;
+  /* margin-top: 10px; */
 }
 
 #image-preview-link-arrow img{
@@ -194,7 +194,7 @@ main .url-input-wrapper > *{
 }
 
 #image-preview-title{
-  margin-top: 50px;
+  margin-top: 30px;
   text-align: left;
   font-size: 30px;
   font-weight: 500;
@@ -204,7 +204,7 @@ main .url-input-wrapper > *{
   position: absolute;
   bottom: 80px;
   text-align: left;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 @media (prefers-color-scheme: dark) {
