@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { Article } from 'subtextPictureGenerator/model/article';
 import { Picture } from 'subtextPictureGenerator/model/picture';
 import { toPng, toSvg } from 'html-to-image';
+import * as he from 'he';
 
 export default function Home() {
   const [article, setArticle] = useState<Article | null>(null);
@@ -66,7 +67,7 @@ export default function Home() {
                     <img src={"/img/arrows.png"}></img>
                   </div>
                   <div id="image-preview-title">
-                    <p>{article.title?.toUpperCase()}</p>
+                    <p>{he.decode(article.title)?.toUpperCase()}</p>
                   </div>
                   <div id='image-preview-footer'>
                     <p>{article.date} / {article.author?.toUpperCase()}</p>
