@@ -46,7 +46,7 @@
 
   h1{
     font-weight: 500;
-    font-size: 72px;
+    font-size: 5vw;
     word-wrap: break-word;
   }
 
@@ -145,6 +145,7 @@
 
   #image-preview-border{
     margin: auto;
+    transform-origin: bottom center;
     margin-bottom: calc(var(--image-preview-reference-width)*0.05);
     aspect-ratio: 9/16;
     border-radius: calc(var(--image-preview-reference-width)*0.024);
@@ -193,7 +194,7 @@
     border: calc(var(--image-preview-reference-width)*0.002) solid black;
     border-radius: calc(var(--image-preview-reference-width)*0.128);
     padding: calc(var(--image-preview-reference-width)*0.005) calc(var(--image-preview-reference-width)*0.02);
-    margin-right: 10px;
+    margin-right: calc(var(--image-preview-reference-width)*0.02);
   }
 
   #image-preview-sub-picture-credits{

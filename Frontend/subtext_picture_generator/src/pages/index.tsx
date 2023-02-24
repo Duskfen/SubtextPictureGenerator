@@ -1,11 +1,34 @@
 import Head from 'next/head'
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Article } from 'subtextPictureGenerator/model/article';
 import { Picture } from 'subtextPictureGenerator/model/picture';
-import { toPng, toSvg } from 'html-to-image';
+import { toPng, toSvg, toJpeg } from 'html-to-image';
 import ReactSlider from "react-slider";
 
 import * as he from 'he';
+
+function useStateCallback<T>(
+  initialState: T
+): [T, (state: T, cb?: (state: T) => void) => void] {
+  const [state, setState] = useState(initialState);
+  const cbRef = useRef<((state: T) => void) | undefined>(undefined); // init mutable ref container for callbacks
+
+  const setStateCallback = useCallback((state: T, cb?: (state: T) => void) => {
+    cbRef.current = cb; // store current, passed callback in ref
+    setState(state);
+  }, []); // keep object reference stable, exactly like `useState`
+
+  useEffect(() => {
+    // cb.current is `undefined` on initial render,
+    // so we only invoke callback on state *updates*
+    if (cbRef.current) {
+      cbRef.current(state);
+      cbRef.current = undefined; // reset callback after execution
+    }
+  }, [state]);
+
+  return [state, setStateCallback];
+}
 
 export default function Home() {
   const [article, setArticle] = useState<Article | null>(null);
@@ -18,19 +41,20 @@ export default function Home() {
   const [maxWidth, setMaxWidth] = useState<number>(defaultReferenceWidth);
 
   const [imagePreviewScale, setImagePreviewScale] = useState<number>(1);
-  function currentReferenceWidth(): number {
-    return defaultReferenceWidth * imagePreviewScale;
-  }
+
+  const [currentReferenceWidth, setCurrentReferenceWidth] = useStateCallback<number>(defaultReferenceWidth);
+  // function currentReferenceWidth(): number {
+  //   return defaultReferenceWidth;// * imagePreviewScale;
+  // }
   const [titleSize, setTitleSize] = useState<number>(0.06);
 
-  React.useEffect(() => {
-    setMaxWidth(window.innerWidth); //TODO 
+  useEffect(() => {
+    setMaxWidth(window.innerWidth);
   }, [])
 
-  React.useEffect(() => {
-    document.documentElement.style
-      .setProperty('--image-preview-reference-width', defaultReferenceWidth*imagePreviewScale + "px");
-  }, [imagePreviewScale])
+  useEffect(() => {
+    document.documentElement.style.setProperty('--image-preview-reference-width', currentReferenceWidth + "px");
+  }, [currentReferenceWidth])
 
   return (
     <>
@@ -85,7 +109,7 @@ export default function Home() {
                     <div id="image-preview-link-arrow">
                       <img src={"/img/arrows.png"}></img>
                     </div>
-                    <div id="image-preview-title" style={{ fontSize: currentReferenceWidth()*titleSize }}>
+                    <div id="image-preview-title" style={{ fontSize: currentReferenceWidth * titleSize }}>
                       <p>{he.decode(article.title)?.toUpperCase()}</p>
                     </div>
                     <div id='image-preview-footer'>
@@ -98,18 +122,25 @@ export default function Home() {
                     console.error("imageref is null; this should not happen");
                     return;
                   }
-                  if (format == "png") {
-                    toPng(imageRef.current, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
-                      .then((dataUrl) => {
-                        const link = document.createElement('a')
-                        link.download = 'generated_subtext_image.png'
-                        link.href = dataUrl
-                        link.click()
-                      })
-                      .catch((err) => {
-                        console.log(err)
-                      })
-                  }
+                  let oldReferencewWidth = currentReferenceWidth;
+                  setCurrentReferenceWidth(500, () => {
+                    setTimeout(() => { //terrible solution, but have to wait that css var gets applied
+                      if (format == "png") {
+                        toJpeg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
+                          .then((dataUrl) => {
+                            const link = document.createElement('a')
+                            link.download = 'generated_subtext_image'
+                            link.href = dataUrl
+                            link.click()
+                          })
+                          .catch((err) => {
+                            console.log(err)
+                          })
+                      }
+                      setCurrentReferenceWidth(oldReferencewWidth);
+                    }, 500)
+                  })
+               
                 }}>DOWNLOAD</button>
               </div>
               <div id="controls">
