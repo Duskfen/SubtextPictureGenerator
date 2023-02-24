@@ -126,7 +126,31 @@ export default function Home() {
                   setCurrentReferenceWidth(500, () => {
                     setTimeout(() => { //terrible solution, but have to wait that css var gets applied
                       if (format == "png") {
+                        toPng(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
+                          .then((dataUrl) => {
+                            const link = document.createElement('a')
+                            link.download = 'generated_subtext_image'
+                            link.href = dataUrl
+                            link.click()
+                          })
+                          .catch((err) => {
+                            console.log(err)
+                          })
+                      }
+                      else if (format == "jpeg") {
                         toJpeg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
+                          .then((dataUrl) => {
+                            const link = document.createElement('a')
+                            link.download = 'generated_subtext_image.jpeg'
+                            link.href = dataUrl
+                            link.click()
+                          })
+                          .catch((err) => {
+                            console.log(err)
+                          })
+                      }
+                      else if (format == "svg") {
+                        toSvg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
                           .then((dataUrl) => {
                             const link = document.createElement('a')
                             link.download = 'generated_subtext_image'
@@ -140,8 +164,8 @@ export default function Home() {
                       setCurrentReferenceWidth(oldReferencewWidth);
                     }, 500)
                   })
-               
-                }}>DOWNLOAD</button>
+
+                }} style={{ marginBottom: 10 }}>DOWNLOAD</button>
               </div>
               <div id="controls">
                 <div className="box">
@@ -161,6 +185,23 @@ export default function Home() {
                           setImagePreviewScale(newscale)
                         }}
                       />
+                    </div>
+                    <div className='input-wrapper'>
+                      <p>Download-Format: </p>
+                      <div id='options-formats-wrapper'>
+                        <div>
+                          <input type="radio" id="options-radio-format-png" checked={format == "png"} onClick={() => setFormat("png")} />
+                          <label htmlFor="options-radio-format-png">PNG</label>
+                        </div>
+                        <div>
+                          <input type="radio" id="options-radio-format-jpeg" checked={format == "jpeg"} onClick={() => setFormat("jpeg")} />
+                          <label htmlFor="options-radio-format-jpeg">JPEG</label>
+                        </div>
+                        <div>
+                          <input type="radio" id="options-radio-format-svg" checked={format == "svg"} onClick={() => setFormat("svg")} />
+                          <label htmlFor="options-radio-format-svg">SVG</label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
