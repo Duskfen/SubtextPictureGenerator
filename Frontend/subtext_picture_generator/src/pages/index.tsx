@@ -13,21 +13,38 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
+  const defaultReferenceWidth = 300;
+
+  const [maxWidth, setMaxWidth] = useState<number>(defaultReferenceWidth);
+
   const [imagePreviewScale, setImagePreviewScale] = useState<number>(1);
-  const [titleSize, setTitleSize] = useState<number>(30);
+  function currentReferenceWidth(): number {
+    return defaultReferenceWidth * imagePreviewScale;
+  }
+  const [titleSize, setTitleSize] = useState<number>(0.06);
+
+  React.useEffect(() => {
+    setMaxWidth(window.innerWidth); //TODO 
+  }, [])
+
+  React.useEffect(() => {
+    document.documentElement.style
+      .setProperty('--image-preview-reference-width', defaultReferenceWidth*imagePreviewScale + "px");
+  }, [imagePreviewScale])
+
   return (
     <>
       <Head>
         <title>Subtext Picture Generator</title>
         <meta name="description" content="Renders a image based on a Subtext article link, to fasten the process of creating a standardized social media appearance" />
-        <meta name="viewport" content="width=1500" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <main>
         {article == null ?
           <div>
             <h1>GENERATE SUBTEXT PICTURE</h1>
-            <div className='input-wrapper'>
+            <div className='input-wrapper-article-url'>
               {/* <p>Article URL:</p> */}
               <input ref={inputRef} placeholder="https://www.subtext.at/year/month/article/"></input>
             </div>
@@ -45,9 +62,7 @@ export default function Home() {
           </div> :
           <>
             <div id="article-loaded-container">
-
               <div id="image-preview-container" >
-
                 <div id="image-preview-border" style={{ scale: imagePreviewScale.toString() }}>
                   <div id='image-preview' ref={imageRef}>
                     <div id="image-preview-heading">
@@ -70,7 +85,7 @@ export default function Home() {
                     <div id="image-preview-link-arrow">
                       <img src={"/img/arrows.png"}></img>
                     </div>
-                    <div id="image-preview-title" style={{ fontSize: titleSize }}>
+                    <div id="image-preview-title" style={{ fontSize: currentReferenceWidth()*titleSize }}>
                       <p>{he.decode(article.title)?.toUpperCase()}</p>
                     </div>
                     <div id='image-preview-footer'>
@@ -107,10 +122,9 @@ export default function Home() {
                         className="customSlider"
                         thumbClassName="customSlider-thumb"
                         trackClassName="customSlider-track"
-                        min={0.3}
-                        max={1}
+                        min={0.5}
+                        max={1} //TODO TEST THIS
                         step={0.005}
-                        // defaultValue={1}
                         value={imagePreviewScale}
                         onChange={(newscale) => {
                           setImagePreviewScale(newscale)
@@ -130,31 +144,8 @@ export default function Home() {
                             className="customSlider"
                             thumbClassName="customSlider-thumb"
                             trackClassName="customSlider-track"
-                            min={10}
-                            max={55}
-                            step={0.005}
-                            // defaultValue={1}F
-                            value={titleSize}
-                            onChange={(newscale) => {
-                              setTitleSize(newscale)
-                            }}
-                          />
-                        </div>
-                        <div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className='input-wrapper'>
-                      <p>Size: </p>
-                      <div>
-                        <div>
-                          <ReactSlider
-                            className="customSlider"
-                            thumbClassName="customSlider-thumb"
-                            trackClassName="customSlider-track"
-                            min={10}
-                            max={55}
+                            min={0.02}
+                            max={0.11}
                             step={0.005}
                             // defaultValue={1}F
                             value={titleSize}
@@ -168,8 +159,6 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-
-
                 </div>
               </div>
             </div>

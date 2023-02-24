@@ -1,10 +1,8 @@
 .customSlider {
-    width: 500px;
-    transition: 0;
+    transition: 0s;
   }
   
   .customSlider-track {
-    /* top: 8px; */
     height: 4px;
     background: var(--track-color);
   }
