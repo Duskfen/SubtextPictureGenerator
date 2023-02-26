@@ -61,33 +61,33 @@ export default function Home() {
               {/* <p>Article URL:</p> */}
               <input ref={inputRef} placeholder="https://www.subtext.at/year/month/article/"></input>
             </div>
-            {fetchState == fetchStates.Fetching?
+            {fetchState == fetchStates.Fetching ?
               <button>READING DATA...</button>
-            :
-            <>
-              <button onClick={async () => {
-                setFetchState(fetchStates.Fetching);
-                let endpoint: string | undefined = process.env.NEXT_PUBLIC_BACKEND_URL
-                if (endpoint == undefined) {
-                  setFetchState(fetchStates.Error);
-                  console.error("Endpoint not specified. Specify Environent Variable");
-                  return;
-                }
-                try {
-                  endpoint += "?url=" + inputRef.current?.value;
-                  let json = await (await fetch(endpoint)).json()
-                  setArticle(new Article(json.title, json.categories, json.author, json.date, new Picture(json.picture.author, json.picture.link)))
-                  setFetchState(fetchStates.Idle)
-                } catch (error) {
-                console.error(error);
-                setFetchState(fetchStates.Error) 
-                }
+              :
+              <>
+                <button onClick={async () => {
+                  setFetchState(fetchStates.Fetching);
+                  let endpoint: string | undefined = process.env.NEXT_PUBLIC_BACKEND_URL
+                  if (endpoint == undefined) {
+                    setFetchState(fetchStates.Error);
+                    console.error("Endpoint not specified. Specify Environent Variable");
+                    return;
+                  }
+                  try {
+                    endpoint += "?url=" + inputRef.current?.value;
+                    let json = await (await fetch(endpoint)).json()
+                    setArticle(new Article(json.title, json.categories, json.author, json.date, new Picture(json.picture.author, json.picture.link)))
+                    setFetchState(fetchStates.Idle)
+                  } catch (error) {
+                    console.error(error);
+                    setFetchState(fetchStates.Error)
+                  }
 
-              }}>GENERATE</button>
-              {fetchState == fetchStates.Error?
-              <div className='box' style={{textAlign: "center", backgroundColor: "#e74c3c"}}>There was an Error</div>:null
-              }
-            </> 
+                }}>GENERATE</button>
+                {fetchState == fetchStates.Error ?
+                  <div className='box' style={{ textAlign: "center", backgroundColor: "#e74c3c" }}>There was an Error</div> : null
+                }
+              </>
             }
 
           </div> :
@@ -146,7 +146,7 @@ export default function Home() {
                 }} style={{ marginBottom: 10 }}>DOWNLOAD</button>
               </div>
               <div id="controls">
-              <button onClick={() => setArticle(null)}>back</button>
+                <button onClick={() => setArticle(null)}>back</button>
 
                 <div className="box">
                   <p className='controls-box-headline'>General</p>

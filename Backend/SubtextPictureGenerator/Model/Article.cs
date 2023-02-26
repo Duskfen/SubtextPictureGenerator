@@ -42,7 +42,7 @@ namespace SubtextPictureGenerator.Model
             categories.AddRange(mainarticle.QuerySelector(".qodef-e-info-category")?.QuerySelectorAll("a")?.Select((e) => e.InnerText.Trim().Replace("\t", "")));
             title = mainarticle.QuerySelector(".qodef-e-title")?.InnerText.Trim().Replace("\t", "");
             picture = new Picture();
-            picture.link = mainarticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-lazy-src"].Value;
+            picture.link = mainarticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-lazy-src"]?.Value ?? mainarticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-src-img"]?.Value;
             picture.author = mainarticle.QuerySelector(".qodef-e-media-image .pt-credits")?.InnerText.Trim().Replace("\t", "");
         }
 
