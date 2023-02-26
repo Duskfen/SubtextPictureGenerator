@@ -140,7 +140,7 @@
     aspect-ratio: 9/16;
     width: var(--image-preview-reference-width);
     padding: calc(var(--image-preview-reference-width)*0.06);
-    font-size: calc(var(--image-preview-reference-width)*0.028);
+    font-size: calc(var(--image-preview-reference-width)*0.03);
     position: relative;
   }
 
@@ -200,7 +200,7 @@
 
   #image-preview-sub-picture-credits{
     text-align: right;
-    font-size: calc(var(--image-preview-reference-width)*0.018);
+    font-size: calc(var(--image-preview-reference-width)*0.02);
   }
 
   #image-preview-link-arrow{

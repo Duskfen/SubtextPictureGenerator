@@ -130,47 +130,18 @@ export default function Home() {
                     return;
                   }
                   let oldReferencewWidth = currentReferenceWidth;
-                  setCurrentReferenceWidth(500, () => {
-                    setTimeout(() => { //terrible solution, but have to wait that css var gets applied
-                      if (format == "png") {
-                        toPng(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
-                          .then((dataUrl) => {
-                            const link = document.createElement('a')
-                            link.download = 'generated_subtext_image'
-                            link.href = dataUrl
-                            link.click()
-                          })
-                          .catch((err) => {
-                            console.log(err)
-                          })
-                      }
-                      else if (format == "jpeg") {
-                        toJpeg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
-                          .then((dataUrl) => {
-                            const link = document.createElement('a')
-                            link.download = 'generated_subtext_image.jpeg'
-                            link.href = dataUrl
-                            link.click()
-                          })
-                          .catch((err) => {
-                            console.log(err)
-                          })
-                      }
-                      else if (format == "svg") {
-                        toSvg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1600, canvasWidth: 900 })
-                          .then((dataUrl) => {
-                            const link = document.createElement('a')
-                            link.download = 'generated_subtext_image'
-                            link.href = dataUrl
-                            link.click()
-                          })
-                          .catch((err) => {
-                            console.log(err)
-                          })
-                      }
-                      setCurrentReferenceWidth(oldReferencewWidth);
-                    }, downloadWaitTime)
-                  })
+                  if(currentReferenceWidth < 500) {
+
+                    setCurrentReferenceWidth(500, () => {
+                      setTimeout(() => { //terrible solution, but have to wait that css var gets applied
+                        downloadPicture();
+                        setCurrentReferenceWidth(oldReferencewWidth);
+                      }, downloadWaitTime)
+                    })
+                  }
+                  else {
+                    downloadPicture();
+                  }
 
                 }} style={{ marginBottom: 10 }}>DOWNLOAD</button>
               </div>
@@ -246,4 +217,43 @@ export default function Home() {
       </main>
     </>
   )
+
+  function downloadPicture() {
+    if (format == "png") {
+      toPng(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.download = 'generated_subtext_image';
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    else if (format == "jpeg") {
+      toJpeg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.download = 'generated_subtext_image.jpeg';
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    else if (format == "svg") {
+      toSvg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.download = 'generated_subtext_image';
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
 }
