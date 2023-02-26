@@ -48,8 +48,15 @@ export default function Home() {
   // }
   const [titleSize, setTitleSize] = useState<number>(0.06);
 
+  let downloadWaitTime = 1500;
+
   useEffect(() => {
     setMaxWidth(window.innerWidth);
+    console.log(window.innerWidth);
+    if(window.innerWidth > 1000){
+      setCurrentReferenceWidth(500)
+      downloadWaitTime = 0;
+    }
   }, [])
 
   useEffect(() => {
@@ -64,7 +71,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
-      <main>
+      <main onResize={(e) => console.log(e.target) }>
         {article == null ?
           <div>
             <h1>GENERATE SUBTEXT PICTURE</h1>
@@ -162,7 +169,7 @@ export default function Home() {
                           })
                       }
                       setCurrentReferenceWidth(oldReferencewWidth);
-                    }, 500)
+                    }, downloadWaitTime)
                   })
 
                 }} style={{ marginBottom: 10 }}>DOWNLOAD</button>
@@ -218,7 +225,7 @@ export default function Home() {
                             trackClassName="customSlider-track"
                             min={0.02}
                             max={0.11}
-                            step={0.005}
+                            step={0.0001}
                             // defaultValue={1}F
                             value={titleSize}
                             onChange={(newscale) => {
