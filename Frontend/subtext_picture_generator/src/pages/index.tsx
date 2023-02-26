@@ -2,37 +2,19 @@ import Head from 'next/head'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Article } from 'subtextPictureGenerator/model/article';
 import { Picture } from 'subtextPictureGenerator/model/picture';
+import { fetchStates } from 'subtextPictureGenerator/model/fetchStates';
+
 import { toPng, toSvg, toJpeg } from 'html-to-image';
 import ReactSlider from "react-slider";
 
 import * as he from 'he';
 
-function useStateCallback<T>(
-  initialState: T
-): [T, (state: T, cb?: (state: T) => void) => void] {
-  const [state, setState] = useState(initialState);
-  const cbRef = useRef<((state: T) => void) | undefined>(undefined); // init mutable ref container for callbacks
-
-  const setStateCallback = useCallback((state: T, cb?: (state: T) => void) => {
-    cbRef.current = cb; // store current, passed callback in ref
-    setState(state);
-  }, []); // keep object reference stable, exactly like `useState`
-
-  useEffect(() => {
-    // cb.current is `undefined` on initial render,
-    // so we only invoke callback on state *updates*
-    if (cbRef.current) {
-      cbRef.current(state);
-      cbRef.current = undefined; // reset callback after execution
-    }
-  }, [state]);
-
-  return [state, setStateCallback];
-}
 
 export default function Home() {
   const [article, setArticle] = useState<Article | null>(null);
   const [format, setFormat] = useState("png")
+  const [fetchState, setFetchState] = useState(fetchStates.Idle);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
@@ -48,12 +30,12 @@ export default function Home() {
   // }
   const [titleSize, setTitleSize] = useState<number>(0.06);
 
-  let downloadWaitTime = 1500;
+  let downloadWaitTime = 500;
 
   useEffect(() => {
     setMaxWidth(window.innerWidth);
     console.log(window.innerWidth);
-    if(window.innerWidth > 1000){
+    if (window.innerWidth > 1000) {
       setCurrentReferenceWidth(500)
       downloadWaitTime = 0;
     }
@@ -71,7 +53,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
-      <main onResize={(e) => console.log(e.target) }>
+      <main onResize={(e) => console.log(e.target)}>
         {article == null ?
           <div>
             <h1>GENERATE SUBTEXT PICTURE</h1>
@@ -79,17 +61,35 @@ export default function Home() {
               {/* <p>Article URL:</p> */}
               <input ref={inputRef} placeholder="https://www.subtext.at/year/month/article/"></input>
             </div>
-            <button onClick={async () => {
-              let endpoint: string | undefined = process.env.NEXT_PUBLIC_BACKEND_URL
-              if (endpoint == undefined) {
-                console.error("Endpoint not specified. Specify Environent Variable");
-                return;
-              }
-              endpoint += "?url=" + inputRef.current?.value;
-              let json = await (await fetch(endpoint)).json()
-              setArticle(new Article(json.title, json.categories, json.author, json.date, new Picture(json.picture.author, json.picture.link)))
+            {fetchState == fetchStates.Fetching?
+              <button>READING DATA...</button>
+            :
+            <>
+              <button onClick={async () => {
+                setFetchState(fetchStates.Fetching);
+                let endpoint: string | undefined = process.env.NEXT_PUBLIC_BACKEND_URL
+                if (endpoint == undefined) {
+                  setFetchState(fetchStates.Error);
+                  console.error("Endpoint not specified. Specify Environent Variable");
+                  return;
+                }
+                try {
+                  endpoint += "?url=" + inputRef.current?.value;
+                  let json = await (await fetch(endpoint)).json()
+                  setArticle(new Article(json.title, json.categories, json.author, json.date, new Picture(json.picture.author, json.picture.link)))
+                  setFetchState(fetchStates.Idle)
+                } catch (error) {
+                console.error(error);
+                setFetchState(fetchStates.Error) 
+                }
 
-            }}>GENERATE</button>
+              }}>GENERATE</button>
+              {fetchState == fetchStates.Error?
+              <div className='box' style={{textAlign: "center", backgroundColor: "#e74c3c"}}>There was an Error</div>:null
+              }
+            </> 
+            }
+
           </div> :
           <>
             <div id="article-loaded-container">
@@ -130,7 +130,7 @@ export default function Home() {
                     return;
                   }
                   let oldReferencewWidth = currentReferenceWidth;
-                  if(currentReferenceWidth < 500) {
+                  if (currentReferenceWidth < 500) {
 
                     setCurrentReferenceWidth(500, () => {
                       setTimeout(() => { //terrible solution, but have to wait that css var gets applied
@@ -146,6 +146,8 @@ export default function Home() {
                 }} style={{ marginBottom: 10 }}>DOWNLOAD</button>
               </div>
               <div id="controls">
+              <button onClick={() => setArticle(null)}>back</button>
+
                 <div className="box">
                   <p className='controls-box-headline'>General</p>
                   <div>
@@ -256,4 +258,27 @@ export default function Home() {
         });
     }
   }
+}
+
+function useStateCallback<T>(
+  initialState: T
+): [T, (state: T, cb?: (state: T) => void) => void] {
+  const [state, setState] = useState(initialState);
+  const cbRef = useRef<((state: T) => void) | undefined>(undefined); // init mutable ref container for callbacks
+
+  const setStateCallback = useCallback((state: T, cb?: (state: T) => void) => {
+    cbRef.current = cb; // store current, passed callback in ref
+    setState(state);
+  }, []); // keep object reference stable, exactly like `useState`
+
+  useEffect(() => {
+    // cb.current is `undefined` on initial render,
+    // so we only invoke callback on state *updates*
+    if (cbRef.current) {
+      cbRef.current(state);
+      cbRef.current = undefined; // reset callback after execution
+    }
+  }, [state]);
+
+  return [state, setStateCallback];
 }
