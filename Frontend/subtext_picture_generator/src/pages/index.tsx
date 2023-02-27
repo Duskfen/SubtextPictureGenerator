@@ -242,7 +242,8 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="box">
+                {/* UNCOMMENT IF YOU WANT TO use custom generated colors. (is commented because it is out of customer scope) */}
+                {/* <div className="box">
                   <p className='controls-box-headline'>Colors</p>
                   <div>
                     <div className='input-wrapper'>
@@ -272,7 +273,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </>
