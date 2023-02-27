@@ -6,8 +6,11 @@ import { fetchStates } from 'subtextPictureGenerator/model/fetchStates';
 
 import { toPng, toSvg, toJpeg } from 'html-to-image';
 import ReactSlider from "react-slider";
+import { prominent, average } from 'color.js'
 
 import * as he from 'he';
+import SubtextLogo from 'subtextPictureGenerator/components/SubtextLogo';
+import Arrows from 'subtextPictureGenerator/components/Arrows';
 
 
 export default function Home() {
@@ -24,6 +27,10 @@ export default function Home() {
 
   const [imagePreviewScale, setImagePreviewScale] = useState<number>(1);
 
+  const [promColors, setPromColors] = useState(["#ffffff", "#000000"]);
+  const [selectedBackgroundColor, setSelectedBackgroundColor] = useState(0);
+  const [selectedOnBackgroundColor, setSelectedOnBackgroundColor] = useState(1);
+
   const [currentReferenceWidth, setCurrentReferenceWidth] = useStateCallback<number>(defaultReferenceWidth);
   // function currentReferenceWidth(): number {
   //   return defaultReferenceWidth;// * imagePreviewScale;
@@ -33,13 +40,35 @@ export default function Home() {
   let downloadWaitTime = 500;
 
   useEffect(() => {
+    document.documentElement.style.setProperty('--preview-on-background', promColors[selectedOnBackgroundColor]);
+    document.documentElement.style.setProperty('--preview-background', promColors[selectedBackgroundColor]);
+  }, [selectedBackgroundColor, selectedOnBackgroundColor])
+
+  useEffect(() => {
     setMaxWidth(window.innerWidth);
     console.log(window.innerWidth);
     if (window.innerWidth > 1000) {
       setCurrentReferenceWidth(500)
       downloadWaitTime = 0;
     }
+
+
   }, [])
+
+  useEffect(() => {
+    setPromColors(["#ffffff", "#000000"]);
+    setSelectedBackgroundColor(0);
+    setSelectedOnBackgroundColor(1);
+    
+    if (article?.picture.src) {
+      prominent(article.picture.src, { amount: 9, group: 60, format: 'hex'}).then((colors: any) => {
+        average(article.picture.src, {format: 'hex'}).then((avgColor:any) => {
+          setPromColors(["#ffffff", "#000000", avgColor].concat(colors.filter((c: string) => {return ((c != "#ffffff") && (c != "#000000"))})));
+
+        })
+      })
+    }
+  }, [article])
 
   useEffect(() => {
     document.documentElement.style.setProperty('--image-preview-reference-width', currentReferenceWidth + "px");
@@ -97,7 +126,8 @@ export default function Home() {
                 <div id="image-preview-border" style={{ scale: imagePreviewScale.toString() }}>
                   <div id='image-preview' ref={imageRef}>
                     <div id="image-preview-heading">
-                      <img src={"/img/subtext-logo.png"}></img>
+                      {/* <img src={"/img/subtext-logo.svg"}></img> */}
+                      <SubtextLogo></SubtextLogo>
                       <div id="image-preview-heading-seperator"></div>
                     </div>
                     <img src={article.picture.src} alt={"FirstImage"} />
@@ -114,7 +144,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div id="image-preview-link-arrow">
-                      <img src={"/img/arrows.png"}></img>
+                      <Arrows></Arrows>
                     </div>
                     <div id="image-preview-title" style={{ fontSize: currentReferenceWidth * titleSize }}>
                       <p>{he.decode(article.title)?.toUpperCase()}</p>
@@ -208,6 +238,37 @@ export default function Home() {
                         </div>
                         <div>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="box">
+                  <p className='controls-box-headline'>Colors</p>
+                  <div>
+                    <div className='input-wrapper'>
+                      <p>Accent: </p>
+                      <div className='controls-colors-row'>
+                        {promColors.map((color, i) => {
+                          return (
+                            <div key={'controls-accent-color-key' + i} className={i == selectedBackgroundColor ? "controls-colors-row-active" : ""} style={{ backgroundColor: color }} onClick={() => {
+                              setSelectedBackgroundColor(i);
+                            }}></div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className='input-wrapper'>
+                      <p>Text: </p>
+                      <div className='controls-colors-row'>
+                        {promColors.map((color, i) => {
+                          return (
+                            <div key={'controls-on-accent-color-key' + i} className={i == selectedOnBackgroundColor ? "controls-colors-row-active" : ""} style={{ backgroundColor: color}} onClick={() => {
+                              setSelectedOnBackgroundColor(i);
+                            }}></div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
