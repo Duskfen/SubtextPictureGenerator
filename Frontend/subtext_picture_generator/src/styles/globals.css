@@ -152,6 +152,8 @@
     position: relative;
   }
 
+
+
   #image-preview-border {
     margin: auto;
     transform-origin: bottom center;
@@ -163,6 +165,20 @@
     justify-content: center;
     background-color: var(--preview-background);
     border: 1px solid rgb(var(--preview-on-background));
+  }
+
+  @supports not (aspect-ratio: 9 / 16) { 
+    #image-preview::before, #image-preview-border::before {
+      float: left;
+      padding-top: 177.777%;
+      content: '';
+    }
+    
+    #image-preview::after, #image-preview-border::after {
+      display: block;
+      content: '';
+      clear: both;
+    }
   }
 
   #image-preview img,
