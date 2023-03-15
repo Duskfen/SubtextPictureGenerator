@@ -247,6 +247,11 @@
     font-weight: 500;
   }
 
+  #image-preview-subtitle{
+    margin-top: calc(var(--image-preview-reference-width)*0.02);
+    text-align: left;
+  }
+
   #image-preview-footer {
     position: absolute;
     bottom: calc(var(--image-preview-reference-width)*0.16);

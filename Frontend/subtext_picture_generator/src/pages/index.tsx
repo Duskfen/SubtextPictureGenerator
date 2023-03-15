@@ -11,6 +11,7 @@ import { prominent, average } from 'color.js'
 import * as he from 'he';
 import SubtextLogo from 'subtextPictureGenerator/components/SubtextLogo';
 import Arrows from 'subtextPictureGenerator/components/Arrows';
+import Switch from 'rc-switch';
 
 
 export default function Home() {
@@ -36,6 +37,8 @@ export default function Home() {
   //   return defaultReferenceWidth;// * imagePreviewScale;
   // }
   const [titleSize, setTitleSize] = useState<number>(0.06);
+  const [subTitleSize, setSubTitleSize] = useState<number>(0.032);
+  const [isSubTitleEnabled, setIsSubTitleEnabled] = useState<boolean>(true);
 
   let downloadWaitTime = 500;
 
@@ -59,11 +62,11 @@ export default function Home() {
     setPromColors(["#ffffff", "#000000"]);
     setSelectedBackgroundColor(0);
     setSelectedOnBackgroundColor(1);
-    
+
     if (article?.picture.src) {
-      prominent(article.picture.src, { amount: 9, group: 60, format: 'hex'}).then((colors: any) => {
-        average(article.picture.src, {format: 'hex'}).then((avgColor:any) => {
-          setPromColors(["#ffffff", "#000000", avgColor].concat(colors.filter((c: string) => {return ((c != "#ffffff") && (c != "#000000"))})));
+      prominent(article.picture.src, { amount: 9, group: 60, format: 'hex' }).then((colors: any) => {
+        average(article.picture.src, { format: 'hex' }).then((avgColor: any) => {
+          setPromColors(["#ffffff", "#000000", avgColor].concat(colors.filter((c: string) => { return ((c != "#ffffff") && (c != "#000000")) })));
 
         })
       })
@@ -105,7 +108,7 @@ export default function Home() {
                   try {
                     endpoint += "?url=" + inputRef.current?.value;
                     let json = await (await fetch(endpoint)).json()
-                    setArticle(new Article(json.title, json.categories, json.author, json.date, new Picture(json.picture.author, json.picture.link)))
+                    setArticle(new Article(json.title, json.categories, json.author, json.date, new Picture(json.picture.author, json.picture.link), json.subtitle))
                     setFetchState(fetchStates.Idle)
                   } catch (error) {
                     console.error(error);
@@ -149,6 +152,12 @@ export default function Home() {
                     <div id="image-preview-title" style={{ fontSize: currentReferenceWidth * titleSize }}>
                       <p>{he.decode(article.title)?.toUpperCase()}</p>
                     </div>
+                    {isSubTitleEnabled ?
+
+                      <div id="image-preview-subtitle" style={{ fontSize: currentReferenceWidth * subTitleSize }}>
+                        <p>{he.decode(article.subtitle)}</p>
+                      </div> : null
+                    }
                     <div id='image-preview-footer'>
                       <p>{article.date} / {article.author?.toUpperCase()}</p>
                     </div>
@@ -188,7 +197,7 @@ export default function Home() {
                         thumbClassName="customSlider-thumb"
                         trackClassName="customSlider-track"
                         min={0.5}
-                        max={1} //TODO TEST THIS
+                        max={1}
                         step={0.005}
                         value={imagePreviewScale}
                         onChange={(newscale) => {
@@ -229,7 +238,6 @@ export default function Home() {
                             min={0.02}
                             max={0.11}
                             step={0.0001}
-                            // defaultValue={1}F
                             value={titleSize}
                             onChange={(newscale) => {
                               setTitleSize(newscale)
@@ -240,6 +248,45 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div className="box">
+                  <p className='controls-box-headline'>Sub-Title</p>
+                  <div>
+                    <div className='input-wrapper'>
+                      <p>Enabled: </p>
+                      <div>
+                        <div>
+                          <Switch
+                            checked={isSubTitleEnabled}
+                            onChange={setIsSubTitleEnabled} />
+                        </div>
+                        <div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='input-wrapper'>
+                      <p>Size: </p>
+                      <div>
+                        <div>
+                          <ReactSlider
+                            className="customSlider"
+                            thumbClassName="customSlider-thumb"
+                            trackClassName="customSlider-track"
+                            min={0.02}
+                            max={0.05}
+                            step={0.0001}
+                            value={subTitleSize}
+                            onChange={(newscale) => {
+                              setSubTitleSize(newscale)
+                            }}
+                          />
+                        </div>
+                        <div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
                 {/* UNCOMMENT IF YOU WANT TO use custom generated colors. (is commented because it is out of customer scope) */}
