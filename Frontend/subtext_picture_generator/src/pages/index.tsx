@@ -155,7 +155,7 @@ export default function Home() {
                     {isSubTitleEnabled ?
 
                       <div id="image-preview-subtitle" style={{ fontSize: currentReferenceWidth * subTitleSize }}>
-                        <p>{he.decode(article.subtitle)}</p>
+                        <p>{he.decode(article.subtitle??"")}</p>
                       </div> : null
                     }
                     <div id='image-preview-footer'>
@@ -258,6 +258,7 @@ export default function Home() {
                       <div>
                         <div>
                           <Switch
+                          disabled={article.subtitle === null}
                             checked={isSubTitleEnabled}
                             onChange={setIsSubTitleEnabled} />
                         </div>
@@ -270,6 +271,7 @@ export default function Home() {
                       <div>
                         <div>
                           <ReactSlider
+                          disabled={article.subtitle === null}
                             className="customSlider"
                             thumbClassName="customSlider-thumb"
                             trackClassName="customSlider-track"
