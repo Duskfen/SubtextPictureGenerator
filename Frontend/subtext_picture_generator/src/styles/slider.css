@@ -2,6 +2,14 @@
     transition: 0s;
   }
   
+  .disabled > div{
+    background-color: #ccc !important ;
+  }  .disabled > div:hover{
+    cursor: no-drop ;
+  }
+  .disabled > .customSlider-thumb{
+    background-color: #9e9e9e !important;
+  }
   .customSlider-track {
     height: 4px;
     background: var(--track-color);
