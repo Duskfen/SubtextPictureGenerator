@@ -212,6 +212,11 @@
     margin-top: calc(var(--image-preview-reference-width)*0.032);
   }
 
+  .image-preview-sub-picture-categories{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   #image-preview-sub-picture-categories-wrapper {
     display: flex;
 
