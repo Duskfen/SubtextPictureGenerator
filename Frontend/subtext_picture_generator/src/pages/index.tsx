@@ -336,7 +336,7 @@ export default function Home() {
       toPng(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
         .then((dataUrl) => {
           const link = document.createElement('a');
-          link.download = 'generated_subtext_image';
+          link.download = 'generated_subtext_image.png';
           link.href = dataUrl;
           link.click();
         })
@@ -360,7 +360,7 @@ export default function Home() {
       toSvg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
         .then((dataUrl) => {
           const link = document.createElement('a');
-          link.download = 'generated_subtext_image';
+          link.download = 'generated_subtext_image.svg';
           link.href = dataUrl;
           link.click();
         })
