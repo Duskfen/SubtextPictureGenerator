@@ -155,7 +155,7 @@ export default function Home() {
                     {isSubTitleEnabled ?
 
                       <div id="image-preview-subtitle" style={{ fontSize: currentReferenceWidth * subTitleSize }}>
-                        <p>{he.decode(article.subtitle??"")}</p>
+                        <p>{he.decode(article.subtitle ?? "")}</p>
                       </div> : null
                     }
                     <div id='image-preview-footer'>
@@ -258,7 +258,7 @@ export default function Home() {
                       <div>
                         <div>
                           <Switch
-                          disabled={article.subtitle === null}
+                            disabled={article.subtitle === null}
                             checked={isSubTitleEnabled}
                             onChange={setIsSubTitleEnabled} />
                         </div>
@@ -271,7 +271,7 @@ export default function Home() {
                       <div>
                         <div>
                           <ReactSlider
-                          disabled={article.subtitle === null}
+                            disabled={article.subtitle === null}
                             className="customSlider"
                             thumbClassName="customSlider-thumb"
                             trackClassName="customSlider-track"
@@ -331,43 +331,27 @@ export default function Home() {
     </>
   )
 
-  function downloadPicture() {
+  async function downloadPicture() {
+    let dataurl: string = "";
     if (format == "png") {
-      toPng(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
-        .then((dataUrl) => {
-          const link = document.createElement('a');
-          link.download = 'generated_subtext_image.png';
-          link.href = dataUrl;
-          link.click();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      dataurl = await toPng(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
     }
     else if (format == "jpeg") {
-      toJpeg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
-        .then((dataUrl) => {
-          const link = document.createElement('a');
-          link.download = 'generated_subtext_image.jpeg';
-          link.href = dataUrl;
-          link.click();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      dataurl = await toJpeg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
     }
     else if (format == "svg") {
-      toSvg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
-        .then((dataUrl) => {
-          const link = document.createElement('a');
-          link.download = 'generated_subtext_image.svg';
-          link.href = dataUrl;
-          link.click();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      dataurl = await toSvg(imageRef.current!, { cacheBust: true, quality: 1, canvasHeight: 1920, canvasWidth: 1080 })
     }
+
+    const link = document.createElement('a');
+    link.download = `generated_subtext_image.${format}`;
+    link.href = dataurl;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+
   }
 }
 
