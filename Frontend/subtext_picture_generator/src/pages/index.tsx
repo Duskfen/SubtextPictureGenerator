@@ -129,7 +129,6 @@ export default function Home() {
                 <div id="image-preview-border" style={{ scale: imagePreviewScale.toString() }}>
                   <div id='image-preview' ref={imageRef}>
                     <div id="image-preview-heading">
-                      {/* <img src={"/img/subtext-logo.svg"}></img> */}
                       <SubtextLogo></SubtextLogo>
                       <div id="image-preview-heading-seperator"></div>
                     </div>
@@ -143,7 +142,7 @@ export default function Home() {
                         })}
                       </div>
                       <div id="image-preview-sub-picture-credits">
-                        {article.picture?.author}
+                        {article.picture?.author?.replaceAll("\n", " ")}
                       </div>
                     </div>
                     <div id="image-preview-link-arrow">
@@ -159,7 +158,7 @@ export default function Home() {
                       </div> : null
                     }
                     <div id='image-preview-footer'>
-                      <p>{article.date} / {article.author?.toUpperCase()}</p>
+                      <p>{article.date} {article.author.replaceAll("\n", " ")?.toUpperCase()}</p>
                     </div>
                   </div>
                 </div>
