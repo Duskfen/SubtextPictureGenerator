@@ -158,8 +158,7 @@ export default function Home() {
                       </div> : null
                     }
                     <div id='image-preview-footer'>
-                      <p>{article.date}</p>
-                      <p>{article.author.replaceAll("\n", " ")?.toUpperCase()}</p>
+                      <p>{article.date} {article.author.replaceAll("\n", " ")?.toUpperCase()}</p>
                     </div>
                   </div>
                 </div>
