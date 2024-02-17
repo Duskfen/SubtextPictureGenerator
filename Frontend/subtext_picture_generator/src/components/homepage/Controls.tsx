@@ -14,8 +14,6 @@ type Props = {
   setTitleSize: (newNumber: number) => void;
   subTitleSize: number;
   setSubTitleSize: (newNumber: number) => void;
-  isSubTitleEnabled: boolean;
-  setIsSubTitleEnabled: (enabled: boolean) => void;
 };
 
 function Controls({
@@ -27,8 +25,6 @@ function Controls({
   setFormat,
   titleSize,
   setTitleSize,
-  isSubTitleEnabled,
-  setIsSubTitleEnabled,
   subTitleSize,
   setSubTitleSize,
 }: Readonly<Props>) {
@@ -116,19 +112,7 @@ function Controls({
       <div className="box">
         <p className="controls-box-headline">Sub-Title</p>
         <div>
-          <div className="input-wrapper">
-            <p>Enabled: </p>
-            <div>
-              <div>
-                <Switch
-                  disabled={article?.subtitle === null}
-                  checked={isSubTitleEnabled}
-                  onChange={setIsSubTitleEnabled}
-                />
-              </div>
-              <div></div>
-            </div>
-          </div>
+
           <div className="input-wrapper">
             <p>Size: </p>
             <div>
