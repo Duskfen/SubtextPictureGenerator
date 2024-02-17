@@ -1,30 +1,24 @@
 import Head from 'next/head'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Article } from 'subtextPictureGenerator/model/article';
-import { Picture } from 'subtextPictureGenerator/model/picture';
-import { fetchStates } from 'subtextPictureGenerator/model/fetchStates';
 
 import { toPng, toSvg, toJpeg } from 'html-to-image';
-import ReactSlider from "react-slider";
 import { prominent, average } from 'color.js'
 
 import * as he from 'he';
 import SubtextLogo from 'subtextPictureGenerator/components/SubtextLogo';
 import Arrows from 'subtextPictureGenerator/components/Arrows';
-import Switch from 'rc-switch';
+import Controls from 'subtextPictureGenerator/components/homepage/Controls';
+import ArticleChooser from 'subtextPictureGenerator/components/homepage/ArticleChooser';
 
 
 export default function Home() {
   const [article, setArticle] = useState<Article | null>(null);
   const [format, setFormat] = useState("png")
-  const [fetchState, setFetchState] = useState(fetchStates.Idle);
 
-  const inputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
   const defaultReferenceWidth = 300;
-
-  const [maxWidth, setMaxWidth] = useState<number>(defaultReferenceWidth);
 
   const [imagePreviewScale, setImagePreviewScale] = useState<number>(1);
 
@@ -48,14 +42,10 @@ export default function Home() {
   }, [selectedBackgroundColor, selectedOnBackgroundColor])
 
   useEffect(() => {
-    setMaxWidth(window.innerWidth);
-    console.log(window.innerWidth);
     if (window.innerWidth > 1000) {
       setCurrentReferenceWidth(500)
       downloadWaitTime = 0;
     }
-
-
   }, [])
 
   useEffect(() => {
@@ -83,46 +73,10 @@ export default function Home() {
         <title>Subtext Picture Generator</title>
         <meta name="description" content="Renders a image based on a Subtext article link, to fasten the process of creating a standardized social media appearance" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
-      <main onResize={(e) => console.log(e.target)}>
+      <main>
         {article == null ?
-          <div>
-            <h1>GENERATE SUBTEXT PICTURE</h1>
-            <div className='input-wrapper-article-url'>
-              {/* <p>Article URL:</p> */}
-              <input ref={inputRef} placeholder="https://www.subtext.at/year/month/article/"></input>
-            </div>
-            {fetchState == fetchStates.Fetching ?
-              <button>READING DATA...</button>
-              :
-              <>
-                <button onClick={async () => {
-                  setFetchState(fetchStates.Fetching);
-                  let endpoint: string | undefined = process.env.NEXT_PUBLIC_BACKEND_URL
-                  if (endpoint == undefined) {
-                    setFetchState(fetchStates.Error);
-                    console.error("Endpoint not specified. Specify Environent Variable");
-                    return;
-                  }
-                  try {
-                    endpoint += "?url=" + inputRef.current?.value;
-                    let json = await (await fetch(endpoint)).json()
-                    setArticle(new Article(json.title, json.categories, json.author, json.date, new Picture(json.picture.author, json.picture.link), json.subtitle))
-                    setFetchState(fetchStates.Idle)
-                  } catch (error) {
-                    console.error(error);
-                    setFetchState(fetchStates.Error)
-                  }
-
-                }}>GENERATE</button>
-                {fetchState == fetchStates.Error ?
-                  <div className='box' style={{ textAlign: "center", backgroundColor: "#e74c3c" }}>There was an Error</div> : null
-                }
-              </>
-            }
-
-          </div> :
+          <ArticleChooser setArticle={setArticle} /> :
           <>
             <div id="article-loaded-container">
               <div id="image-preview-container" >
@@ -183,146 +137,20 @@ export default function Home() {
 
                 }} style={{ marginBottom: 10 }}>DOWNLOAD</button>
               </div>
-              <div id="controls">
-                <button onClick={() => setArticle(null)}>back</button>
-
-                <div className="box">
-                  <p className='controls-box-headline'>General</p>
-                  <div>
-                    <div className='input-wrapper'>
-                      <p>Preview-Scale: </p>
-                      <ReactSlider
-                        className="customSlider"
-                        thumbClassName="customSlider-thumb"
-                        trackClassName="customSlider-track"
-                        min={0.5}
-                        max={1}
-                        step={0.005}
-                        value={imagePreviewScale}
-                        onChange={(newscale) => {
-                          setImagePreviewScale(newscale)
-                        }}
-                      />
-                    </div>
-                    <div className='input-wrapper'>
-                      <p>Download-Format: </p>
-                      <div id='options-formats-wrapper'>
-                        <div>
-                          <input type="radio" id="options-radio-format-png" checked={format == "png"} onClick={() => setFormat("png")} />
-                          <label htmlFor="options-radio-format-png">PNG</label>
-                        </div>
-                        <div>
-                          <input type="radio" id="options-radio-format-jpeg" checked={format == "jpeg"} onClick={() => setFormat("jpeg")} />
-                          <label htmlFor="options-radio-format-jpeg">JPEG</label>
-                        </div>
-                        <div>
-                          <input type="radio" id="options-radio-format-svg" checked={format == "svg"} onClick={() => setFormat("svg")} />
-                          <label htmlFor="options-radio-format-svg">SVG</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="box">
-                  <p className='controls-box-headline'>Title</p>
-                  <div>
-                    <div className='input-wrapper'>
-                      <p>Size: </p>
-                      <div>
-                        <div>
-                          <ReactSlider
-                            className="customSlider"
-                            thumbClassName="customSlider-thumb"
-                            trackClassName="customSlider-track"
-                            min={0.02}
-                            max={0.11}
-                            step={0.0001}
-                            value={titleSize}
-                            onChange={(newscale) => {
-                              setTitleSize(newscale)
-                            }}
-                          />
-                        </div>
-                        <div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="box">
-                  <p className='controls-box-headline'>Sub-Title</p>
-                  <div>
-                    <div className='input-wrapper'>
-                      <p>Enabled: </p>
-                      <div>
-                        <div>
-                          <Switch
-                            disabled={article.subtitle === null}
-                            checked={isSubTitleEnabled}
-                            onChange={setIsSubTitleEnabled} />
-                        </div>
-                        <div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='input-wrapper'>
-                      <p>Size: </p>
-                      <div>
-                        <div>
-                          <ReactSlider
-                            disabled={article.subtitle === null}
-                            className="customSlider"
-                            thumbClassName="customSlider-thumb"
-                            trackClassName="customSlider-track"
-                            min={0.02}
-                            max={0.05}
-                            step={0.0001}
-                            value={subTitleSize}
-                            onChange={(newscale) => {
-                              setSubTitleSize(newscale)
-                            }}
-                          />
-                        </div>
-                        <div>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-                {/* UNCOMMENT IF YOU WANT TO use custom generated colors. (is commented because it is out of customer scope) */}
-                {/* <div className="box">
-                  <p className='controls-box-headline'>Colors</p>
-                  <div>
-                    <div className='input-wrapper'>
-                      <p>Accent: </p>
-                      <div className='controls-colors-row'>
-                        {promColors.map((color, i) => {
-                          return (
-                            <div key={'controls-accent-color-key' + i} className={i == selectedBackgroundColor ? "controls-colors-row-active" : ""} style={{ backgroundColor: color }} onClick={() => {
-                              setSelectedBackgroundColor(i);
-                            }}></div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className='input-wrapper'>
-                      <p>Text: </p>
-                      <div className='controls-colors-row'>
-                        {promColors.map((color, i) => {
-                          return (
-                            <div key={'controls-on-accent-color-key' + i} className={i == selectedOnBackgroundColor ? "controls-colors-row-active" : ""} style={{ backgroundColor: color}} onClick={() => {
-                              setSelectedOnBackgroundColor(i);
-                            }}></div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
-              </div>
+                <Controls 
+                article={article}
+                format={format}
+                imagePreviewScale={imagePreviewScale}
+                isSubTitleEnabled={isSubTitleEnabled}
+                setArticle={setArticle}
+                setFormat={setFormat}
+                setImagePreviewScale={setImagePreviewScale}
+                setIsSubTitleEnabled={setIsSubTitleEnabled}
+                setSubTitleSize={setSubTitleSize}
+                setTitleSize={setTitleSize}
+                subTitleSize={subTitleSize}
+                titleSize={titleSize}
+                />
             </div>
           </>
         }

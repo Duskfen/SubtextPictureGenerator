@@ -14,7 +14,7 @@ namespace SubtextPictureGenerator
 {
     public static class ScrapeSubtextData
     {
-        static HttpClient client = new HttpClient();
+        static readonly HttpClient client = new HttpClient();
 
         [FunctionName("scrape")]
         public static async Task<IActionResult> Run(
