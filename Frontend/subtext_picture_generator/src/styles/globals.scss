@@ -268,15 +268,11 @@
 
   .text-content-wrapper{
     padding: calc(var(--image-preview-reference-width)*0.06);
+    padding-bottom: calc(var(--image-preview-reference-width)*0.02);
     padding-top: calc(var(--image-preview-reference-width)*0.20);
-  
-    .image-preview-author{
-      font-weight: 600;
-    }
   
     .title{
       padding: calc(var(--image-preview-reference-width)*0.02) 0;
-      font-weight: 600;
       min-height: calc(var(--image-preview-reference-width)*0.2);
     }
 
