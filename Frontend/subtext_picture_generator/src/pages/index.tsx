@@ -140,7 +140,6 @@ export default function Home() {
                           })}
                         </div>
                         <div className="image-credits">
-                          {" "}
                           {article.picture?.author?.replaceAll("\n", " ")}
                         </div>
                       </div>
