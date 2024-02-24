@@ -6,8 +6,6 @@ import { toPng, toSvg, toJpeg } from "html-to-image";
 import { prominent, average } from "color.js";
 
 import * as he from "he";
-import SubtextLogo from "subtextPictureGenerator/components/SubtextLogo";
-import Arrows from "subtextPictureGenerator/components/Arrows";
 import Controls from "subtextPictureGenerator/components/homepage/Controls";
 import ArticleChooser from "subtextPictureGenerator/components/homepage/ArticleChooser";
 
@@ -153,38 +151,6 @@ export default function Home() {
                         alt={"Headline image of the Article"}
                       />
                     </div>
-                    {/* <div id="image-preview-heading">
-                      <SubtextLogo></SubtextLogo>
-                      <div id="image-preview-heading-seperator"></div>
-                    </div>
-                    <img src={article.picture.src} alt={"FirstImage"} />
-                    <div id="image-preview-sub-picture">
-                      <div id="image-preview-sub-picture-categories-wrapper">
-                        {article.categories?.map((item, i) => {
-                          return <div key={"Picture-Category_" + i} className='image-preview-sub-picture-categories'>
-                            {item?.toUpperCase()}
-                          </div>
-                        })}
-                      </div>
-                      <div id="image-preview-sub-picture-credits">
-                        {article.picture?.author?.replaceAll("\n", " ")}
-                      </div>
-                    </div>
-                    <div id="image-preview-link-arrow">
-                      <Arrows></Arrows>
-                    </div>
-                    <div id="image-preview-title" style={{ fontSize: currentReferenceWidth * titleSize }}>
-                      <p>{he.decode(article.title)?.toUpperCase()}</p>
-                    </div>
-                    {isSubTitleEnabled ?
-
-                      <div id="image-preview-subtitle" style={{ fontSize: currentReferenceWidth * subTitleSize }}>
-                        <p>{he.decode(article.subtitle ?? "")}</p>
-                      </div> : null
-                    }
-                    <div id='image-preview-footer'>
-                      <p>{article.date} {article.author.replaceAll("\n", " ")?.toUpperCase()}</p>
-                    </div> */}
                   </div>
                 </div>
                 <button
