@@ -142,17 +142,6 @@
     border: 2px solid var(--on-main-color);
   }
 
-  #image-preview {
-    background-color: var(--preview-background);
-    color: var(--preview-on-background);
-    aspect-ratio: 9/16;
-    width: var(--image-preview-reference-width);
-    
-    font-size: calc(var(--image-preview-reference-width)*0.03);
-    position: relative;
-    text-align: left;
-    overflow: hidden;
-  }
 
 
 
@@ -160,13 +149,10 @@
     margin: auto;
     transform-origin: bottom center;
     margin-bottom: calc(var(--image-preview-reference-width)*0.05);
-    aspect-ratio: 9/16;
-    border-radius: calc(var(--image-preview-reference-width)*0.024);
+    
     width: calc(var(--image-preview-reference-width) + calc(var(--image-preview-reference-width)*0.04));
     display: flex;
     justify-content: center;
-    background-color: var(--preview-background);
-    border: 1px solid rgb(var(--preview-on-background));
   }
 
   @supports not (aspect-ratio: 9 / 16) { 
@@ -183,7 +169,14 @@
     }
   }
 #image-preview{
-
+  background-color: var(--preview-background);
+  color: var(--preview-on-background);
+  width: var(--image-preview-reference-width);  
+  aspect-ratio: 9/16;
+  font-size: calc(var(--image-preview-reference-width)*0.03);
+  position: relative;
+  text-align: left;
+  overflow: hidden;
   .text-content-wrapper{
     padding: calc(var(--image-preview-reference-width)*0.06);
     padding-bottom: calc(var(--image-preview-reference-width)*0.03);

@@ -203,6 +203,7 @@ export default function Home() {
         quality: 1,
         canvasHeight: 1920,
         canvasWidth: 1080,
+        pixelRatio: 1,
       });
     } else if (format == "jpeg") {
       dataurl = await toJpeg(imageRef.current!, {
@@ -210,6 +211,7 @@ export default function Home() {
         quality: 1,
         canvasHeight: 1920,
         canvasWidth: 1080,
+        pixelRatio: 1,
       });
     } else if (format == "svg") {
       dataurl = await toSvg(imageRef.current!, {
@@ -217,6 +219,7 @@ export default function Home() {
         quality: 1,
         canvasHeight: 1920,
         canvasWidth: 1080,
+        pixelRatio: 1,
       });
     }
 
