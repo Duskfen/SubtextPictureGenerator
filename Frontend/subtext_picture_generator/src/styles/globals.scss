@@ -236,7 +236,7 @@
   }
   .image-wrapper {
     img{
-      height: calc(var(--image-preview-reference-width)*0.85);
+      height: calc(var(--image-preview-reference-width)*0.9);
       width: 100%;
       object-fit: cover;
       object-position: center center;
