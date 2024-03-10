@@ -7,6 +7,8 @@ type Props = {
   setArticle: (article: Article) => void;
 };
 
+const tagBlackList = ["lead"];
+
 function ArticleChooser({ setArticle }: Readonly<Props>) {
   const [fetchState, setFetchState] = useState(fetchStates.Idle);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +45,7 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
                 setArticle(
                   new Article(
                     json.title,
-                    json.categories,
+                    json.categories.filter((c:string) => tagBlackList.includes(c)),
                     json.author,
                     json.date,
                     new Picture(json.picture.author, json.picture.link),
