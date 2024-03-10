@@ -229,6 +229,7 @@
     
   
       .image-credits{
+        white-space: nowrap;
         font-size: calc(var(--image-preview-reference-width)*0.02);
       }
     }

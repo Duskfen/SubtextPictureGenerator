@@ -26,7 +26,7 @@ export default function Home() {
   const [currentReferenceWidth, setCurrentReferenceWidth] =
     useStateCallback<number>(defaultReferenceWidth);
 
-  const [titleSize, setTitleSize] = useState<number>(0.06);
+  const [titleSize, setTitleSize] = useState<number>(0.08);
   const [subTitleSize, setSubTitleSize] = useState<number>(0.03);
 
   let downloadWaitTime = 500;
@@ -140,7 +140,7 @@ export default function Home() {
                           })}
                         </div>
                         <div className="image-credits">
-                          {article.picture?.author?.replaceAll("\n", " ")}
+                          <p>{article.picture?.author?.replaceAll("\n", " ")}</p>
                         </div>
                       </div>
                     </div>
