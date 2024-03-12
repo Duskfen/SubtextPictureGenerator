@@ -33,23 +33,8 @@ function Controls({
       <button onClick={() => setArticle(null)}>back</button>
 
       <div className="box">
-        <p className="controls-box-headline">General</p>
+        <p className="controls-box-headline">Datei</p>
         <div>
-          <div className="input-wrapper">
-            <p>Preview-Scale: </p>
-            <ReactSlider
-              className="customSlider"
-              thumbClassName="customSlider-thumb"
-              trackClassName="customSlider-track"
-              min={0.5}
-              max={1}
-              step={0.005}
-              value={imagePreviewScale}
-              onChange={(newscale) => {
-                setImagePreviewScale(newscale);
-              }}
-            />
-          </div>
           <div className="input-wrapper">
             <p>Download-Format: </p>
             <div id="options-formats-wrapper">

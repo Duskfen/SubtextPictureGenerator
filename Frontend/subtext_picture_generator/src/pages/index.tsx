@@ -27,7 +27,7 @@ export default function Home() {
     useStateCallback<number>(defaultReferenceWidth);
 
   const [titleSize, setTitleSize] = useState<number>(0.08);
-  const [subTitleSize, setSubTitleSize] = useState<number>(0.03);
+  const [subTitleSize, setSubTitleSize] = useState<number>(0.031);
 
   let downloadWaitTime = 500;
 
