@@ -180,17 +180,29 @@ main {
 }
 
 .generated-image-fallback {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
   max-width: 320px;
+  text-align: center;
+
+  summary {
+    font-size: 13px;
+    opacity: 0.6;
+    cursor: pointer;
+    list-style: none;
+    text-decoration: underline;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 
   p {
-    font-size: 14px;
-    opacity: 0.8;
-    text-align: center;
+    font-size: 13px;
+    opacity: 0.7;
+    margin: 12px 0 8px;
   }
 
   img {

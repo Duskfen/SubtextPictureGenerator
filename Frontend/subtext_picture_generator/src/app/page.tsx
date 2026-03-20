@@ -237,19 +237,11 @@ export default function Home() {
               </div>
             )}
             {generatedImageUrl && (
-              <div className="generated-image-fallback">
-                <p>Long-press the image below to save it:</p>
+              <details className="generated-image-fallback">
+                <summary>Download didn&apos;t start?</summary>
+                <p>Long-press the image to save it:</p>
                 <img src={generatedImageUrl} alt="Generated image" />
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    URL.revokeObjectURL(generatedImageUrl);
-                    setGeneratedImageUrl(null);
-                  }}
-                >
-                  Dismiss
-                </button>
-              </div>
+              </details>
             )}
           </div>
           <Controls
