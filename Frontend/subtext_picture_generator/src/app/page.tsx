@@ -104,18 +104,25 @@ export default function Home() {
       dataurl = await toSvg(imageRef.current, options);
     }
 
+    const fileName = `generated_subtext_image.${format}`;
+    const mimeType = format === "svg" ? "image/svg+xml" : `image/${format}`;
     const response = await fetch(dataurl);
     const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
+    const file = new File([blob], fileName, { type: mimeType });
 
-    const link = document.createElement("a");
-    link.download = `generated_subtext_image.${format}`;
-    link.href = blobUrl;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(blobUrl);
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file] });
+    } else {
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = fileName;
+      link.href = blobUrl;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    }
   }, [format]);
 
   const handleDownload = useCallback(async () => {
