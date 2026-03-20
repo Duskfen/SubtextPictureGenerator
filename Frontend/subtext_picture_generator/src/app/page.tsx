@@ -114,29 +114,43 @@ export default function Home() {
       await navigator.share({ files: [file] });
     } else {
       const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.download = fileName;
-      link.href = blobUrl;
-      link.style.display = "none";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
+      // Desktop: programmatic download
+      // Mobile fallback: open in new tab (long-press to save)
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.open(blobUrl, "_blank");
+      } else {
+        const link = document.createElement("a");
+        link.download = fileName;
+        link.href = blobUrl;
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      }
     }
   }, [format]);
 
   const handleDownload = useCallback(async () => {
     if (imageRef.current == null) return;
 
-    if (currentReferenceWidth < 500) {
-      const oldWidth = currentReferenceWidth;
+    const needsResize = currentReferenceWidth < 500;
+    const oldWidth = currentReferenceWidth;
+
+    if (needsResize) {
       setCurrentReferenceWidth(500);
-      setTimeout(async () => {
-        await downloadPicture();
-        setCurrentReferenceWidth(oldWidth);
-      }, downloadWaitTime.current);
-    } else {
+      await new Promise((r) => setTimeout(r, downloadWaitTime.current));
+    }
+
+    try {
       await downloadPicture();
+    } catch {
+      // user may have dismissed share dialog
+    } finally {
+      if (needsResize) {
+        setCurrentReferenceWidth(oldWidth);
+      }
     }
   }, [currentReferenceWidth, downloadPicture]);
 
