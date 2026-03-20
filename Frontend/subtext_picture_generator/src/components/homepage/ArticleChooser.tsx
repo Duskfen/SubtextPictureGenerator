@@ -19,6 +19,7 @@ const tagBlackList = ["lead"];
 function ArticleChooser({ setArticle }: Readonly<Props>) {
   const [fetchState, setFetchState] = useState(FetchState.Idle);
   const [recentArticles, setRecentArticles] = useState<RecentArticle[] | null>(null);
+  const [recentError, setRecentError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -26,12 +27,21 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
       /\/scrape$/,
       ""
     );
-    if (!backendBase) return;
+    if (!backendBase) {
+      setRecentError(true);
+      return;
+    }
 
     fetch(`${backendBase}/recent`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
       .then((data) => setRecentArticles(data))
-      .catch(() => setRecentArticles([]));
+      .catch(() => {
+        setRecentArticles([]);
+        setRecentError(true);
+      });
   }, []);
 
   const generateFromUrl = async (url: string) => {
@@ -117,7 +127,9 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
       )}
 
       <div className="recent-articles">
-        <p className="recent-articles-label">Recent articles</p>
+        {(recentArticles === null || recentArticles.length > 0) && (
+          <p className="recent-articles-label">Recent articles</p>
+        )}
         <div className="recent-articles-list">
           {recentArticles === null
             ? Array.from({ length: 10 }).map((_, i) => (
@@ -140,6 +152,11 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
                 </button>
               ))}
         </div>
+        {recentError && (
+          <p className="recent-articles-error">
+            Could not load recent articles.
+          </p>
+        )}
       </div>
     </div>
   );
