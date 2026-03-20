@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json.Serialization;
 using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
@@ -45,10 +46,12 @@ public class Article
         Title = mainArticle.QuerySelector(".qodef-e-title")?.InnerText.Trim().Replace("\t", "");
         Subtitle = mainArticle.QuerySelector(".qodef-e-title + p")?.InnerText.Trim().Replace("\t", "");
 
+        var rawImageUrl = mainArticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-lazy-src"]?.Value
+                         ?? mainArticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-src-img"]?.Value;
+
         Picture = new Picture
         {
-            Link = mainArticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-lazy-src"]?.Value
-                   ?? mainArticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-src-img"]?.Value,
+            Link = rawImageUrl != null ? WebUtility.HtmlDecode(rawImageUrl) : null,
             Author = mainArticle.QuerySelector(".qodef-e-media-image .pt-credits")?.InnerText.Trim().Replace("\t", "")
         };
     }
