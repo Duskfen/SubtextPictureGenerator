@@ -14,7 +14,7 @@ export default function Home() {
 
   const imageRef = useRef<HTMLDivElement>(null);
 
-  const defaultReferenceWidth = 300;
+  const defaultReferenceWidth = 280;
 
   const [imagePreviewScale, setImagePreviewScale] = useState<number>(1);
 
@@ -42,8 +42,8 @@ export default function Home() {
   }, [promColors, selectedBackgroundColor, selectedOnBackgroundColor]);
 
   useEffect(() => {
-    if (window.innerWidth > 1000) {
-      setCurrentReferenceWidth(500);
+    if (window.innerWidth > 768) {
+      setCurrentReferenceWidth(400);
       downloadWaitTime.current = 0;
     }
   }, []);
@@ -191,7 +191,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <button onClick={handleDownload} style={{ marginBottom: 10 }}>
+            <button className="btn btn-download" onClick={handleDownload}>
               DOWNLOAD
             </button>
           </div>

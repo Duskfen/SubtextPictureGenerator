@@ -15,7 +15,7 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div>
+    <div className="chooser-screen">
       <h1>GENERATE SUBTEXT PICTURE</h1>
       <div className="input-wrapper-article-url">
         <input
@@ -24,10 +24,13 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
         />
       </div>
       {fetchState === FetchState.Fetching ? (
-        <button>READING DATA...</button>
+        <button className="btn btn-primary" disabled>
+          READING DATA...
+        </button>
       ) : (
         <>
           <button
+            className="btn btn-primary"
             onClick={async () => {
               setFetchState(FetchState.Fetching);
               const endpoint = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -66,11 +69,8 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
             GENERATE
           </button>
           {fetchState === FetchState.Error && (
-            <div
-              className="box"
-              style={{ textAlign: "center", backgroundColor: "#e74c3c" }}
-            >
-              There was an Error
+            <div className="error-box">
+              Something went wrong. Please check the URL and try again.
             </div>
           )}
         </>
