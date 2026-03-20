@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace SubtextPictureGenerator.Model;
 
-namespace SubtextPictureGenerator.Model
+public class Picture
 {
-    internal class Picture
-    {
-        public string link;
+    public string? Link { get; set; }
 
-        public string author;
-
-    }
+    public string? Author { get; set; }
 }

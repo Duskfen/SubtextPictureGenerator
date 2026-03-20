@@ -1,7 +1,8 @@
+"use client";
+
 import React, { useRef, useState } from "react";
-import { Article } from "subtextPictureGenerator/model/article";
-import { fetchStates } from "subtextPictureGenerator/model/fetchStates";
-import { Picture } from "subtextPictureGenerator/model/picture";
+import { Article } from "@/model/article";
+import { FetchState } from "@/model/fetchStates";
 
 type Props = {
   setArticle: (article: Article) => void;
@@ -10,65 +11,68 @@ type Props = {
 const tagBlackList = ["lead"];
 
 function ArticleChooser({ setArticle }: Readonly<Props>) {
-  const [fetchState, setFetchState] = useState(fetchStates.Idle);
+  const [fetchState, setFetchState] = useState(FetchState.Idle);
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div>
       <h1>GENERATE SUBTEXT PICTURE</h1>
       <div className="input-wrapper-article-url">
-        {/* <p>Article URL:</p> */}
         <input
           ref={inputRef}
           placeholder="https://www.subtext.at/year/month/article/"
-        ></input>
+        />
       </div>
-      {fetchState == fetchStates.Fetching ? (
+      {fetchState === FetchState.Fetching ? (
         <button>READING DATA...</button>
       ) : (
         <>
           <button
             onClick={async () => {
-              setFetchState(fetchStates.Fetching);
-              let endpoint: string | undefined =
-                process.env.NEXT_PUBLIC_BACKEND_URL;
-              if (endpoint == undefined) {
-                setFetchState(fetchStates.Error);
+              setFetchState(FetchState.Fetching);
+              const endpoint = process.env.NEXT_PUBLIC_BACKEND_URL;
+              if (!endpoint) {
+                setFetchState(FetchState.Error);
                 console.error(
-                  "Endpoint not specified. Specify Environent Variable"
+                  "Endpoint not specified. Specify Environment Variable"
                 );
                 return;
               }
               try {
-                endpoint += "?url=" + inputRef.current?.value;
-                let json = await (await fetch(endpoint)).json();
-                setArticle(
-                  new Article(
-                    json.title,
-                    json.categories.filter((c:string) => tagBlackList.includes(c)),
-                    json.author,
-                    json.date,
-                    new Picture(json.picture.author, json.picture.link),
-                    json.subtitle
-                  )
+                const response = await fetch(
+                  `${endpoint}?url=${encodeURIComponent(inputRef.current?.value ?? "")}`
                 );
-                setFetchState(fetchStates.Idle);
+                const json = await response.json();
+                setArticle({
+                  title: json.title,
+                  categories: json.categories.filter(
+                    (c: string) => tagBlackList.includes(c)
+                  ),
+                  author: json.author,
+                  date: json.date,
+                  picture: {
+                    author: json.picture.author,
+                    src: json.picture.link,
+                  },
+                  subtitle: json.subtitle,
+                });
+                setFetchState(FetchState.Idle);
               } catch (error) {
                 console.error(error);
-                setFetchState(fetchStates.Error);
+                setFetchState(FetchState.Error);
               }
             }}
           >
             GENERATE
           </button>
-          {fetchState == fetchStates.Error ? (
+          {fetchState === FetchState.Error && (
             <div
               className="box"
               style={{ textAlign: "center", backgroundColor: "#e74c3c" }}
             >
               There was an Error
             </div>
-          ) : null}
+          )}
         </>
       )}
     </div>

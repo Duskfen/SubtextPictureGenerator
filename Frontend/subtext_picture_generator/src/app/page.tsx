@@ -1,0 +1,214 @@
+"use client";
+
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Article } from "@/model/article";
+import { toPng, toSvg, toJpeg } from "html-to-image";
+import { prominent, average } from "color.js";
+import * as he from "he";
+import Controls from "@/components/homepage/Controls";
+import ArticleChooser from "@/components/homepage/ArticleChooser";
+
+export default function Home() {
+  const [article, setArticle] = useState<Article | null>(null);
+  const [format, setFormat] = useState("png");
+
+  const imageRef = useRef<HTMLDivElement>(null);
+
+  const defaultReferenceWidth = 300;
+
+  const [imagePreviewScale, setImagePreviewScale] = useState<number>(1);
+
+  const [promColors, setPromColors] = useState(["#ffffff", "#000000"]);
+  const [selectedBackgroundColor, setSelectedBackgroundColor] = useState(0);
+  const [selectedOnBackgroundColor, setSelectedOnBackgroundColor] = useState(1);
+
+  const [currentReferenceWidth, setCurrentReferenceWidth] =
+    useState<number>(defaultReferenceWidth);
+
+  const [titleSize, setTitleSize] = useState<number>(0.08);
+  const [subTitleSize, setSubTitleSize] = useState<number>(0.031);
+
+  const downloadWaitTime = useRef(500);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--preview-on-background",
+      promColors[selectedOnBackgroundColor]
+    );
+    document.documentElement.style.setProperty(
+      "--preview-background",
+      promColors[selectedBackgroundColor]
+    );
+  }, [promColors, selectedBackgroundColor, selectedOnBackgroundColor]);
+
+  useEffect(() => {
+    if (window.innerWidth > 1000) {
+      setCurrentReferenceWidth(500);
+      downloadWaitTime.current = 0;
+    }
+  }, []);
+
+  useEffect(() => {
+    setPromColors(["#ffffff", "#000000"]);
+    setSelectedBackgroundColor(0);
+    setSelectedOnBackgroundColor(1);
+
+    if (article?.picture.src) {
+      prominent(article.picture.src, {
+        amount: 9,
+        group: 60,
+        format: "hex",
+      }).then((colors: any) => {
+        average(article.picture.src, { format: "hex" }).then(
+          (avgColor: any) => {
+            setPromColors(
+              ["#ffffff", "#000000", avgColor].concat(
+                colors.filter((c: string) => {
+                  return c !== "#ffffff" && c !== "#000000";
+                })
+              )
+            );
+          }
+        );
+      });
+    }
+  }, [article]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--image-preview-reference-width",
+      currentReferenceWidth + "px"
+    );
+  }, [currentReferenceWidth]);
+
+  const downloadPicture = useCallback(async () => {
+    if (imageRef.current == null) {
+      console.error("imageref is null; this should not happen");
+      return;
+    }
+
+    const options = {
+      cacheBust: true,
+      quality: 1,
+      canvasHeight: 1920,
+      canvasWidth: 1080,
+      pixelRatio: 1,
+    };
+
+    let dataurl = "";
+    if (format === "png") {
+      dataurl = await toPng(imageRef.current, options);
+    } else if (format === "jpeg") {
+      dataurl = await toJpeg(imageRef.current, options);
+    } else if (format === "svg") {
+      dataurl = await toSvg(imageRef.current, options);
+    }
+
+    const link = document.createElement("a");
+    link.download = `generated_subtext_image.${format}`;
+    link.href = dataurl;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, [format]);
+
+  const handleDownload = useCallback(async () => {
+    if (imageRef.current == null) return;
+
+    if (currentReferenceWidth < 500) {
+      const oldWidth = currentReferenceWidth;
+      setCurrentReferenceWidth(500);
+      setTimeout(async () => {
+        await downloadPicture();
+        setCurrentReferenceWidth(oldWidth);
+      }, downloadWaitTime.current);
+    } else {
+      await downloadPicture();
+    }
+  }, [currentReferenceWidth, downloadPicture]);
+
+  return (
+    <main>
+      {article == null ? (
+        <ArticleChooser setArticle={setArticle} />
+      ) : (
+        <div id="article-loaded-container">
+          <div id="image-preview-container">
+            <div
+              id="image-preview-border"
+              style={{ scale: imagePreviewScale.toString() }}
+            >
+              <div id="image-preview" ref={imageRef}>
+                <div className="text-content-wrapper">
+                  <div className="image-preview-author">
+                    {article.date}{" "}
+                    {he
+                      .decode(article.author.replaceAll("\n", " "))
+                      ?.toUpperCase()}
+                  </div>
+                  <div
+                    className="title"
+                    style={{
+                      fontSize: currentReferenceWidth * titleSize,
+                    }}
+                  >
+                    {he.decode(article.title)?.toUpperCase()}
+                  </div>
+                  <div
+                    className="lead"
+                    style={{
+                      fontSize: currentReferenceWidth * subTitleSize,
+                    }}
+                  >
+                    <p>{he.decode(article.subtitle ?? "")}</p>
+                  </div>
+                  <div className="whole-article-tease">
+                    DER GANZE ARTIKEL AUF
+                  </div>
+                  <div className="sub-infos">
+                    <div className="tags-wrapper">
+                      {article.categories?.map((item, i) => (
+                        <div key={"Picture-Category_" + i} className="tag">
+                          {item?.toUpperCase()}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="image-credits">
+                      <p>
+                        {he.decode(
+                          article.picture?.author?.replaceAll("\n", " ") ?? ""
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="image-wrapper">
+                  <img
+                    src={article.picture.src}
+                    alt="Headline image of the Article"
+                  />
+                </div>
+              </div>
+            </div>
+            <button onClick={handleDownload} style={{ marginBottom: 10 }}>
+              DOWNLOAD
+            </button>
+          </div>
+          <Controls
+            article={article}
+            format={format}
+            imagePreviewScale={imagePreviewScale}
+            setArticle={setArticle}
+            setFormat={setFormat}
+            setImagePreviewScale={setImagePreviewScale}
+            setSubTitleSize={setSubTitleSize}
+            setTitleSize={setTitleSize}
+            subTitleSize={subTitleSize}
+            titleSize={titleSize}
+          />
+        </div>
+      )}
+    </main>
+  );
+}

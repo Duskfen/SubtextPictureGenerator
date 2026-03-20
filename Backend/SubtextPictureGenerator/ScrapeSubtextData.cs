@@ -1,71 +1,53 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SubtextPictureGenerator.Model;
-using System.Net.Http;
 
-namespace SubtextPictureGenerator
+namespace SubtextPictureGenerator;
+
+public class ScrapeSubtextData
 {
-    public static class ScrapeSubtextData
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<ScrapeSubtextData> _logger;
+
+    public ScrapeSubtextData(IHttpClientFactory httpClientFactory, ILogger<ScrapeSubtextData> logger)
     {
-        static readonly HttpClient client = new HttpClient();
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+    }
 
-        [FunctionName("scrape")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-            ILogger log)
+    [Function("scrape")]
+    public async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+    {
+        _logger.LogInformation("Scrape function triggered.");
+
+        string? url = req.Query["url"];
+
+        if (string.IsNullOrWhiteSpace(url))
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-
-            #region Process Request
-
-            string url = req.Query["url"];
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic body = JsonConvert.DeserializeObject(requestBody);
-            url ??= body?.url;
-
-            if (url == null || url.Trim() == "")
-            {
-                return new BadRequestObjectResult("Please provide a url of a Subtext article either in the query params or the request body");
-            }
-
-            log.LogInformation("got url from message: " + url);
-
-            #endregion
-
-            #region Scrape Subtext
-
-
-            Article article = new Article(url);
-
-
-
-            //article.headline = "test";
-            //article.date = "08.05.2099";
-            //article.picture = new Picture("base64string", "pictureAuthor1");
-            //article.tag = "Testtag";
-            //return new OkObjectResult(article);
-
-            try
-            {
-                article.ScrapeArticleFromHtml(await client.GetStringAsync(article.url));
-            }
-            catch (HttpRequestException e)
-            {
-                log.LogError(e, "Exceptin while scraping/Getting raw HTML");
-                return new NotFoundObjectResult("The Article could not be scraped. Check if you specified the right url");
-            }
-
-            #endregion
-            return new OkObjectResult(article);
-
-
+            return new BadRequestObjectResult(
+                "Please provide a url of a Subtext article in the query params");
         }
+
+        _logger.LogInformation("Scraping article from: {Url}", url);
+
+        var article = new Article(url);
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            var html = await client.GetStringAsync(article.Url);
+            article.ScrapeArticleFromHtml(html);
+        }
+        catch (HttpRequestException e)
+        {
+            _logger.LogError(e, "Error while fetching article HTML");
+            return new NotFoundObjectResult(
+                "The article could not be scraped. Check if you specified the right url");
+        }
+
+        return new OkObjectResult(article);
     }
 }

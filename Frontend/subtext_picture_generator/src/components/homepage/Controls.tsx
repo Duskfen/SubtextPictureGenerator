@@ -1,11 +1,13 @@
+"use client";
+
 import Switch from "rc-switch";
 import React from "react";
 import ReactSlider from "react-slider";
-import { Article } from "subtextPictureGenerator/model/article";
+import { Article } from "@/model/article";
 
 type Props = {
   article: Article | null;
-  setArticle: (aricle: Article | null) => void;
+  setArticle: (article: Article | null) => void;
   imagePreviewScale: number;
   setImagePreviewScale: (newscale: number) => void;
   format: string;
@@ -42,8 +44,8 @@ function Controls({
                 <input
                   type="radio"
                   id="options-radio-format-png"
-                  checked={format == "png"}
-                  onClick={() => setFormat("png")}
+                  checked={format === "png"}
+                  onChange={() => setFormat("png")}
                 />
                 <label htmlFor="options-radio-format-png">PNG</label>
               </div>
@@ -51,8 +53,8 @@ function Controls({
                 <input
                   type="radio"
                   id="options-radio-format-jpeg"
-                  checked={format == "jpeg"}
-                  onClick={() => setFormat("jpeg")}
+                  checked={format === "jpeg"}
+                  onChange={() => setFormat("jpeg")}
                 />
                 <label htmlFor="options-radio-format-jpeg">JPEG</label>
               </div>
@@ -60,8 +62,8 @@ function Controls({
                 <input
                   type="radio"
                   id="options-radio-format-svg"
-                  checked={format == "svg"}
-                  onClick={() => setFormat("svg")}
+                  checked={format === "svg"}
+                  onChange={() => setFormat("svg")}
                 />
                 <label htmlFor="options-radio-format-svg">SVG</label>
               </div>
@@ -97,7 +99,6 @@ function Controls({
       <div className="box">
         <p className="controls-box-headline">Sub-Title</p>
         <div>
-
           <div className="input-wrapper">
             <p>Size: </p>
             <div>

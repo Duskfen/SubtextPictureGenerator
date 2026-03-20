@@ -1,5 +1,3 @@
-import React from 'react'
-
 function SubtextLogo() {
     return (
         <svg x="0px" y="0px"

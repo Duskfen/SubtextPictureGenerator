@@ -1,5 +1,3 @@
-import React from 'react'
-
 function Arrows() {
 	return (
 		<svg version="1.1" x="0px" y="0px"

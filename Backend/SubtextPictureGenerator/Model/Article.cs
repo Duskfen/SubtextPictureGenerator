@@ -1,53 +1,55 @@
-﻿using Fizzler.Systems.HtmlAgilityPack;
+using System.Text.Json.Serialization;
+using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SubtextPictureGenerator.Model
+namespace SubtextPictureGenerator.Model;
+
+public class Article
 {
-    internal class Article
+    [JsonIgnore]
+    public string Url { get; set; }
+
+    public string? Title { get; set; }
+
+    public string? Subtitle { get; set; }
+
+    public List<string> Categories { get; set; } = [];
+
+    public string? Author { get; set; }
+
+    public string? Date { get; set; }
+
+    public Picture? Picture { get; set; }
+
+    public Article(string url)
     {
-        public string url;
+        Url = url;
+    }
 
-        public string title;
+    public void ScrapeArticleFromHtml(string rawHtml)
+    {
+        var html = new HtmlDocument();
+        html.LoadHtml(rawHtml);
 
-        public string subtitle;
+        var mainArticle = html.DocumentNode.QuerySelector("article");
 
-        public List<string> categories = new List<string>();
+        Date = mainArticle.QuerySelector(".qodef-e-info-date")?.InnerText.Trim().Replace("\t", "");
+        Author = mainArticle.QuerySelector(".qodef-e-info-author")?.InnerText.Trim().Replace("\t", "");
 
-        public string author;
-
-        public string date;
-
-        public Picture picture;
-
-        public Article(string url)
+        var categoryLinks = mainArticle.QuerySelector(".qodef-e-info-category")?.QuerySelectorAll("a");
+        if (categoryLinks != null)
         {
-            this.url = url;
+            Categories.AddRange(categoryLinks.Select(e => e.InnerText.Trim().Replace("\t", "")));
         }
 
-        /// <summary>
-        /// Scrapes the URL and populates the Article-Properties
-        /// </summary>
-        public void ScrapeArticleFromHtml(string rawHtml)
+        Title = mainArticle.QuerySelector(".qodef-e-title")?.InnerText.Trim().Replace("\t", "");
+        Subtitle = mainArticle.QuerySelector(".qodef-e-title + p")?.InnerText.Trim().Replace("\t", "");
+
+        Picture = new Picture
         {
-            var html = new HtmlDocument();
-            html.LoadHtml(rawHtml);
-
-            HtmlNode mainarticle = html.DocumentNode.QuerySelector("article");
-
-            date = mainarticle.QuerySelector(".qodef-e-info-date")?.InnerText.Trim().Replace("\t", "");
-            author = mainarticle.QuerySelector(".qodef-e-info-author")?.InnerText.Trim().Replace("\t", "");
-            categories.AddRange(mainarticle.QuerySelector(".qodef-e-info-category")?.QuerySelectorAll("a")?.Select((e) => e.InnerText.Trim().Replace("\t", "")));
-            title = mainarticle.QuerySelector(".qodef-e-title")?.InnerText.Trim().Replace("\t", "");
-            subtitle = mainarticle.QuerySelector(".qodef-e-title + p")?.InnerText.Trim().Replace("\t", "");
-            picture = new Picture();
-            picture.link = mainarticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-lazy-src"]?.Value ?? mainarticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-src-img"]?.Value;
-            picture.author = mainarticle.QuerySelector(".qodef-e-media-image .pt-credits")?.InnerText.Trim().Replace("\t", "");
-        }
-
+            Link = mainArticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-lazy-src"]?.Value
+                   ?? mainArticle.QuerySelector(".qodef-e-media-image img")?.Attributes["data-src-img"]?.Value,
+            Author = mainArticle.QuerySelector(".qodef-e-media-image .pt-credits")?.InnerText.Trim().Replace("\t", "")
+        };
     }
 }

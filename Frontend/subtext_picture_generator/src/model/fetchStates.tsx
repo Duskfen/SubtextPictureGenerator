@@ -1,5 +1,5 @@
-export enum fetchStates{
-    Idle,
-    Fetching,
-    Error,
+export enum FetchState {
+  Idle,
+  Fetching,
+  Error,
 }
