@@ -12,6 +12,7 @@ export default function Home() {
   const [article, setArticle] = useState<Article | null>(null);
   const [format, setFormat] = useState("png");
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const imageRef = useRef<HTMLDivElement>(null);
 
@@ -141,10 +142,11 @@ export default function Home() {
       await new Promise((r) => setTimeout(r, downloadWaitTime.current));
     }
 
+    setDownloadError(null);
     try {
       await downloadPicture();
-    } catch {
-      // user may have dismissed share dialog
+    } catch (e) {
+      setDownloadError(e instanceof Error ? e.message : String(e));
     } finally {
       if (needsResize) {
         setCurrentReferenceWidth(oldWidth);
@@ -218,6 +220,11 @@ export default function Home() {
             <button className="btn btn-download" onClick={handleDownload}>
               DOWNLOAD
             </button>
+            {downloadError && (
+              <div className="error-box" style={{ maxWidth: 320 }}>
+                {downloadError}
+              </div>
+            )}
             {generatedImageUrl && (
               <div className="generated-image-fallback">
                 <p>Long-press the image below to save it:</p>
