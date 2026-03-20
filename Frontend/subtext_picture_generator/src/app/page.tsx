@@ -11,6 +11,7 @@ import ArticleChooser from "@/components/homepage/ArticleChooser";
 export default function Home() {
   const [article, setArticle] = useState<Article | null>(null);
   const [format, setFormat] = useState("png");
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
 
   const imageRef = useRef<HTMLDivElement>(null);
 
@@ -114,21 +115,18 @@ export default function Home() {
       await navigator.share({ files: [file] });
     } else {
       const blobUrl = URL.createObjectURL(blob);
-      // Desktop: programmatic download
-      // Mobile fallback: open in new tab (long-press to save)
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        window.open(blobUrl, "_blank");
-      } else {
-        const link = document.createElement("a");
-        link.download = fileName;
-        link.href = blobUrl;
-        link.style.display = "none";
-        document.body.appendChild(link);
-        link.click();
+      const link = document.createElement("a");
+      link.download = fileName;
+      link.href = blobUrl;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+
+      // If download didn't trigger (mobile Firefox etc.), show image inline
+      setTimeout(() => {
         document.body.removeChild(link);
-        URL.revokeObjectURL(blobUrl);
-      }
+        setGeneratedImageUrl(blobUrl);
+      }, 500);
     }
   }, [format]);
 
@@ -220,6 +218,21 @@ export default function Home() {
             <button className="btn btn-download" onClick={handleDownload}>
               DOWNLOAD
             </button>
+            {generatedImageUrl && (
+              <div className="generated-image-fallback">
+                <p>Long-press the image below to save it:</p>
+                <img src={generatedImageUrl} alt="Generated image" />
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    URL.revokeObjectURL(generatedImageUrl);
+                    setGeneratedImageUrl(null);
+                  }}
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
           </div>
           <Controls
             article={article}
