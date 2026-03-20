@@ -104,13 +104,18 @@ export default function Home() {
       dataurl = await toSvg(imageRef.current, options);
     }
 
+    const response = await fetch(dataurl);
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
     const link = document.createElement("a");
     link.download = `generated_subtext_image.${format}`;
-    link.href = dataurl;
+    link.href = blobUrl;
     link.style.display = "none";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
   }, [format]);
 
   const handleDownload = useCallback(async () => {
