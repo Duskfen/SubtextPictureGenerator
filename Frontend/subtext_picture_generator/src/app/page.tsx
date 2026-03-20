@@ -30,6 +30,7 @@ export default function Home() {
 
   const [titleSize, setTitleSize] = useState<number>(0.08);
   const [subTitleSize, setSubTitleSize] = useState<number>(0.031);
+  const [showArticleTease, setShowArticleTease] = useState(true);
 
   const downloadWaitTime = useRef(500);
 
@@ -200,7 +201,10 @@ export default function Home() {
                   >
                     <p>{he.decode(article.subtitle ?? "")}</p>
                   </div>
-                  <div className="whole-article-tease">
+                  <div
+                    className="whole-article-tease"
+                    style={{ visibility: showArticleTease ? "visible" : "hidden" }}
+                  >
                     DER GANZE ARTIKEL AUF
                   </div>
                   <div className="sub-infos">
@@ -255,6 +259,8 @@ export default function Home() {
             setTitleSize={setTitleSize}
             subTitleSize={subTitleSize}
             titleSize={titleSize}
+            showArticleTease={showArticleTease}
+            setShowArticleTease={setShowArticleTease}
           />
         </div>
       )}

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Switch from "rc-switch";
 import ReactSlider from "react-slider";
 import { Article } from "@/model/article";
 
@@ -15,6 +16,8 @@ type Props = {
   setTitleSize: (newNumber: number) => void;
   subTitleSize: number;
   setSubTitleSize: (newNumber: number) => void;
+  showArticleTease: boolean;
+  setShowArticleTease: (show: boolean) => void;
 };
 
 function Controls({
@@ -26,6 +29,8 @@ function Controls({
   setTitleSize,
   subTitleSize,
   setSubTitleSize,
+  showArticleTease,
+  setShowArticleTease,
 }: Readonly<Props>) {
   return (
     <div id="controls">
@@ -110,6 +115,17 @@ function Controls({
               onChange={(newscale) => setSubTitleSize(newscale)}
             />
           </div>
+        </div>
+      </div>
+
+      <div className="box">
+        <p className="controls-box-headline">Elements</p>
+        <div className="input-wrapper">
+          <p>Article tease</p>
+          <Switch
+            checked={showArticleTease}
+            onChange={setShowArticleTease}
+          />
         </div>
       </div>
     </div>
