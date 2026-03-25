@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Article } from "@/model/article";
 import { FetchState } from "@/model/fetchStates";
+import SubtextLogo from "@/components/SubtextLogo";
 
 type Props = {
   setArticle: (article: Article) => void;
@@ -90,7 +91,7 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
 
   return (
     <div className="chooser-screen">
-      <h1>GENERATE SUBTEXT PICTURE</h1>
+      <h1>GENERATE <SubtextLogo /> PICTURE</h1>
       <div className="input-wrapper-article-url">
         <input
           ref={inputRef}

@@ -1,7 +1,8 @@
 function SubtextLogo() {
     return (
         <svg x="0px" y="0px"
-            viewBox="0 0 1080 224">
+            viewBox="0 0 1080 224"
+            fill="currentColor">
             <g>
                 <g>
                     <path d="M127.2,115.9H90.3c0-7.7-9.1-18.1-24.9-18.1c-11.1,0-24.7,5-24.7,13.8c0,7.5,10.2,10.4,32,16.1
