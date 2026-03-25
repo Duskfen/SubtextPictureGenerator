@@ -2,8 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Article } from "@/model/article";
-import html2canvas from "html2canvas";
-import { toSvg } from "html-to-image";
+import { toPng, toSvg, toJpeg } from "html-to-image";
 import { prominent, average } from "color.js";
 import * as he from "he";
 import Controls from "@/components/homepage/Controls";
@@ -91,37 +90,28 @@ export default function Home() {
       return;
     }
 
-    const fileName = `generated_subtext_image.${format}`;
-    let blob: Blob;
+    const options = {
+      cacheBust: true,
+      quality: 1,
+      canvasHeight: 1920,
+      canvasWidth: 1080,
+      pixelRatio: 1,
+      fetchRequestInit: { mode: "cors" as RequestMode },
+    };
 
-    if (format === "svg") {
-      const dataurl = await toSvg(imageRef.current, {
-        cacheBust: true,
-        quality: 1,
-        canvasHeight: 1920,
-        canvasWidth: 1080,
-        pixelRatio: 1,
-      });
-      const response = await fetch(dataurl);
-      blob = await response.blob();
-    } else {
-      const canvas = await html2canvas(imageRef.current, {
-        width: imageRef.current.offsetWidth,
-        height: imageRef.current.offsetHeight,
-        scale: 1080 / imageRef.current.offsetWidth,
-        useCORS: true,
-        allowTaint: true,
-      });
-      blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(
-          (b) => (b ? resolve(b) : reject(new Error("Failed to create image"))),
-          `image/${format}`,
-          1
-        );
-      });
+    let dataurl = "";
+    if (format === "png") {
+      dataurl = await toPng(imageRef.current, options);
+    } else if (format === "jpeg") {
+      dataurl = await toJpeg(imageRef.current, options);
+    } else if (format === "svg") {
+      dataurl = await toSvg(imageRef.current, options);
     }
 
+    const fileName = `generated_subtext_image.${format}`;
     const mimeType = format === "svg" ? "image/svg+xml" : `image/${format}`;
+    const response = await fetch(dataurl);
+    const blob = await response.blob();
     const file = new File([blob], fileName, { type: mimeType });
 
     if (navigator.canShare?.({ files: [file] })) {
