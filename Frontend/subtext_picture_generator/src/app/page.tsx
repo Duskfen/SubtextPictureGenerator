@@ -110,7 +110,6 @@ export default function Home() {
       canvasHeight: 1920,
       canvasWidth: 1080,
       pixelRatio: 1,
-      fetchRequestInit: { mode: "cors" as RequestMode },
     };
 
     let dataurl = "";
