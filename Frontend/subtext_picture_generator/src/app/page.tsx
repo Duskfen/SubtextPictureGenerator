@@ -30,6 +30,8 @@ export default function Home() {
   const [titleSize, setTitleSize] = useState<number>(0.08);
   const [subTitleSize, setSubTitleSize] = useState<number>(0.031);
   const [showArticleTease, setShowArticleTease] = useState(true);
+  const [imagePositionX, setImagePositionX] = useState(50);
+  const [imagePositionY, setImagePositionY] = useState(50);
 
   const downloadWaitTime = useRef(500);
 
@@ -84,10 +86,15 @@ export default function Home() {
     );
   }, [currentReferenceWidth]);
 
-  const downloadPicture = useCallback(async () => {
+  const [canShare, setCanShare] = useState(false);
+
+  useEffect(() => {
+    setCanShare(typeof navigator.canShare === "function");
+  }, []);
+
+  const generateImage = useCallback(async () => {
     if (imageRef.current == null) {
-      console.error("imageref is null; this should not happen");
-      return;
+      throw new Error("imageref is null; this should not happen");
     }
 
     const options = {
@@ -112,28 +119,10 @@ export default function Home() {
     const mimeType = format === "svg" ? "image/svg+xml" : `image/${format}`;
     const response = await fetch(dataurl);
     const blob = await response.blob();
-    const file = new File([blob], fileName, { type: mimeType });
-
-    if (navigator.canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file] });
-    } else {
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.download = fileName;
-      link.href = blobUrl;
-      link.style.display = "none";
-      document.body.appendChild(link);
-      link.click();
-
-      // If download didn't trigger (mobile Firefox etc.), show image inline
-      setTimeout(() => {
-        document.body.removeChild(link);
-        setGeneratedImageUrl(blobUrl);
-      }, 500);
-    }
+    return new File([blob], fileName, { type: mimeType });
   }, [format]);
 
-  const handleDownload = useCallback(async () => {
+  const withResize = useCallback(async (action: () => Promise<void>) => {
     if (imageRef.current == null) return;
 
     const needsResize = currentReferenceWidth < 500;
@@ -146,7 +135,7 @@ export default function Home() {
 
     setDownloadError(null);
     try {
-      await downloadPicture();
+      await action();
     } catch (e) {
       setDownloadError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -154,7 +143,30 @@ export default function Home() {
         setCurrentReferenceWidth(oldWidth);
       }
     }
-  }, [currentReferenceWidth, downloadPicture]);
+  }, [currentReferenceWidth]);
+
+  const handleDownload = useCallback(() => withResize(async () => {
+    const file = await generateImage();
+    const blobUrl = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.download = file.name;
+    link.href = blobUrl;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+
+    setTimeout(() => {
+      document.body.removeChild(link);
+      setGeneratedImageUrl(blobUrl);
+    }, 500);
+  }), [withResize, generateImage]);
+
+  const handleShare = useCallback(() => withResize(async () => {
+    const file = await generateImage();
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file] });
+    }
+  }), [withResize, generateImage]);
 
   return (
     <main>
@@ -218,13 +230,21 @@ export default function Home() {
                   <img
                     src={article.picture.src}
                     alt="Headline image of the Article"
+                    style={{ objectPosition: `${imagePositionX}% ${imagePositionY}%` }}
                   />
                 </div>
               </div>
             </div>
-            <button className="btn btn-download" onClick={handleDownload}>
-              DOWNLOAD
-            </button>
+            <div className="action-buttons">
+              <button className="action-link" onClick={handleDownload}>
+                DOWNLOAD
+              </button>
+              {canShare && (
+                <button className="action-link" onClick={handleShare}>
+                  SHARE
+                </button>
+              )}
+            </div>
             {downloadError && (
               <div className="error-box" style={{ maxWidth: 320 }}>
                 {downloadError}
@@ -251,6 +271,10 @@ export default function Home() {
             titleSize={titleSize}
             showArticleTease={showArticleTease}
             setShowArticleTease={setShowArticleTease}
+            imagePositionX={imagePositionX}
+            setImagePositionX={setImagePositionX}
+            imagePositionY={imagePositionY}
+            setImagePositionY={setImagePositionY}
           />
         </div>
       )}

@@ -104,13 +104,13 @@ function ArticleChooser({ setArticle }: Readonly<Props>) {
         />
       </div>
       {fetchState === FetchState.Fetching ? (
-        <button className="btn btn-primary" disabled>
-          <span className="spinner" /> READING DATA...
+        <button className="action-link action-link-dark" disabled>
+          <span className="spinner spinner-dark" /> READING DATA...
         </button>
       ) : (
         <>
           <button
-            className="btn btn-primary"
+            className="action-link action-link-dark"
             onClick={() => {
               if (inputRef.current?.value) {
                 generateFromUrl(inputRef.current.value);

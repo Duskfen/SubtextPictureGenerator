@@ -18,6 +18,10 @@ type Props = {
   setSubTitleSize: (newNumber: number) => void;
   showArticleTease: boolean;
   setShowArticleTease: (show: boolean) => void;
+  imagePositionX: number;
+  setImagePositionX: (val: number) => void;
+  imagePositionY: number;
+  setImagePositionY: (val: number) => void;
 };
 
 function Controls({
@@ -31,12 +35,16 @@ function Controls({
   setSubTitleSize,
   showArticleTease,
   setShowArticleTease,
+  imagePositionX,
+  setImagePositionX,
+  imagePositionY,
+  setImagePositionY,
 }: Readonly<Props>) {
   return (
     <div id="controls">
       <div className="controls-header">
-        <button className="btn btn-secondary" onClick={() => setArticle(null)}>
-          &larr; Back
+        <button className="action-link action-link-dark" onClick={() => setArticle(null)}>
+          &larr; BACK
         </button>
       </div>
 
@@ -83,7 +91,7 @@ function Controls({
         <p className="controls-box-headline">Title</p>
         <div className="input-wrapper">
           <p>Size</p>
-          <div>
+          <div onDoubleClick={() => setTitleSize(0.08)}>
             <ReactSlider
               className="customSlider"
               thumbClassName="customSlider-thumb"
@@ -102,7 +110,7 @@ function Controls({
         <p className="controls-box-headline">Subtitle</p>
         <div className="input-wrapper">
           <p>Size</p>
-          <div>
+          <div onDoubleClick={() => setSubTitleSize(0.031)}>
             <ReactSlider
               disabled={article?.subtitle === null}
               className="customSlider"
@@ -113,6 +121,40 @@ function Controls({
               step={0.0001}
               value={subTitleSize}
               onChange={(newscale) => setSubTitleSize(newscale)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="box">
+        <p className="controls-box-headline">Image</p>
+        <div className="input-wrapper">
+          <p>Horizontal</p>
+          <div onDoubleClick={() => setImagePositionX(50)}>
+            <ReactSlider
+              className="customSlider"
+              thumbClassName="customSlider-thumb"
+              trackClassName="customSlider-track"
+              min={0}
+              max={100}
+              step={1}
+              value={imagePositionX}
+              onChange={(val) => setImagePositionX(val)}
+            />
+          </div>
+        </div>
+        <div className="input-wrapper">
+          <p>Vertical</p>
+          <div onDoubleClick={() => setImagePositionY(50)}>
+            <ReactSlider
+              className="customSlider"
+              thumbClassName="customSlider-thumb"
+              trackClassName="customSlider-track"
+              min={0}
+              max={100}
+              step={1}
+              value={imagePositionY}
+              onChange={(val) => setImagePositionY(val)}
             />
           </div>
         </div>
