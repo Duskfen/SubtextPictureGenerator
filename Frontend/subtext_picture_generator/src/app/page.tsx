@@ -89,7 +89,14 @@ export default function Home() {
   const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
-    setCanShare(typeof navigator.canShare === "function");
+    try {
+      const testFile = new File([], "test.png", { type: "image/png" });
+      const hasShareApi = navigator.canShare?.({ files: [testFile] }) === true;
+      const isMobile = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      setCanShare(hasShareApi && isMobile);
+    } catch {
+      setCanShare(false);
+    }
   }, []);
 
   const generateImage = useCallback(async () => {
