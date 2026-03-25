@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Article } from "@/model/article";
-import { toSvg } from "html-to-image";
+import { toPng, toSvg, toJpeg } from "html-to-image";
 import { prominent, average } from "color.js";
 import * as he from "he";
 import Controls from "@/components/homepage/Controls";
@@ -177,45 +177,28 @@ export default function Home() {
       throw new Error("imageref is null; this should not happen");
     }
 
-    const svgDataUrl = await toSvg(imageRef.current, {
+    const options = {
       cacheBust: true,
       quality: 1,
       canvasHeight: 1920,
       canvasWidth: 1080,
       pixelRatio: 1,
-    });
+    };
 
-    const fileName = `generated_subtext_image.${format}`;
-
-    if (format === "svg") {
-      const response = await fetch(svgDataUrl);
-      const blob = await response.blob();
-      return new File([blob], fileName, { type: "image/svg+xml" });
+    let dataurl = "";
+    if (format === "png") {
+      dataurl = await toPng(imageRef.current, options);
+    } else if (format === "jpeg") {
+      dataurl = await toJpeg(imageRef.current, options);
+    } else if (format === "svg") {
+      dataurl = await toSvg(imageRef.current, options);
     }
 
-    // Convert SVG to raster (PNG/JPEG) via canvas
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = reject;
-      img.src = svgDataUrl;
-    });
-
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1920;
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(img, 0, 0, 1080, 1920);
-
-    const blob = await new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob(
-        (b) => (b ? resolve(b) : reject(new Error("Failed to create image"))),
-        `image/${format}`,
-        1
-      );
-    });
-    return new File([blob], fileName, { type: `image/${format}` });
+    const fileName = `generated_subtext_image.${format}`;
+    const mimeType = format === "svg" ? "image/svg+xml" : `image/${format}`;
+    const response = await fetch(dataurl);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: mimeType });
   }, [format]);
 
   const withResize = useCallback(async (action: () => Promise<void>) => {
