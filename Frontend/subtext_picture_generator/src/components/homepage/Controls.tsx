@@ -1,25 +1,9 @@
 "use client";
 
-import React, { useCallback, useRef } from "react";
+import React from "react";
 import Switch from "rc-switch";
 import ReactSlider from "react-slider";
 import { Article } from "@/model/article";
-
-function useDoubleTap(callback: () => void, delay = 300) {
-  const lastTap = useRef(0);
-  return useCallback(
-    (e: React.TouchEvent) => {
-      if (e.touches.length > 1) return;
-      const now = Date.now();
-      if (now - lastTap.current < delay) {
-        e.preventDefault();
-        callback();
-      }
-      lastTap.current = now;
-    },
-    [callback, delay]
-  );
-}
 
 type Props = {
   article: Article | null;
@@ -60,18 +44,6 @@ function Controls({
   imageZoom,
   setImageZoom,
 }: Readonly<Props>) {
-  const resetTitle = useCallback(() => setTitleSize(0.08), [setTitleSize]);
-  const resetSubTitle = useCallback(() => setSubTitleSize(0.031), [setSubTitleSize]);
-  const resetPosX = useCallback(() => setImagePositionX(50), [setImagePositionX]);
-  const resetPosY = useCallback(() => setImagePositionY(50), [setImagePositionY]);
-  const resetZoom = useCallback(() => setImageZoom(1), [setImageZoom]);
-
-  const dtTitle = useDoubleTap(resetTitle);
-  const dtSubTitle = useDoubleTap(resetSubTitle);
-  const dtPosX = useDoubleTap(resetPosX);
-  const dtPosY = useDoubleTap(resetPosY);
-  const dtZoom = useDoubleTap(resetZoom);
-
   return (
     <div id="controls">
       <div className="controls-header">
@@ -123,7 +95,7 @@ function Controls({
         <p className="controls-box-headline">Title</p>
         <div className="input-wrapper">
           <p>Size</p>
-          <div onDoubleClick={resetTitle} onTouchStart={dtTitle}>
+          <div>
             <ReactSlider
               className="customSlider"
               thumbClassName="customSlider-thumb"
@@ -135,6 +107,7 @@ function Controls({
               onChange={(newscale) => setTitleSize(newscale)}
             />
           </div>
+          {titleSize !== 0.08 && <button className="reset-btn" onClick={() => setTitleSize(0.08)} aria-label="Reset">&#x21A9;</button>}
         </div>
       </div>
 
@@ -142,7 +115,7 @@ function Controls({
         <p className="controls-box-headline">Subtitle</p>
         <div className="input-wrapper">
           <p>Size</p>
-          <div onDoubleClick={resetSubTitle} onTouchStart={dtSubTitle}>
+          <div>
             <ReactSlider
               disabled={article?.subtitle === null}
               className="customSlider"
@@ -155,6 +128,7 @@ function Controls({
               onChange={(newscale) => setSubTitleSize(newscale)}
             />
           </div>
+          {subTitleSize !== 0.031 && <button className="reset-btn" onClick={() => setSubTitleSize(0.031)} aria-label="Reset">&#x21A9;</button>}
         </div>
       </div>
 
@@ -162,7 +136,7 @@ function Controls({
         <p className="controls-box-headline">Image</p>
         <div className="input-wrapper">
           <p>Horizontal</p>
-          <div onDoubleClick={resetPosX} onTouchStart={dtPosX}>
+          <div>
             <ReactSlider
               className="customSlider"
               thumbClassName="customSlider-thumb"
@@ -174,10 +148,11 @@ function Controls({
               onChange={(val) => setImagePositionX(val)}
             />
           </div>
+          {imagePositionX !== 50 && <button className="reset-btn" onClick={() => setImagePositionX(50)} aria-label="Reset">&#x21A9;</button>}
         </div>
         <div className="input-wrapper">
           <p>Vertical</p>
-          <div onDoubleClick={resetPosY} onTouchStart={dtPosY}>
+          <div>
             <ReactSlider
               className="customSlider"
               thumbClassName="customSlider-thumb"
@@ -189,10 +164,11 @@ function Controls({
               onChange={(val) => setImagePositionY(val)}
             />
           </div>
+          {imagePositionY !== 50 && <button className="reset-btn" onClick={() => setImagePositionY(50)} aria-label="Reset">&#x21A9;</button>}
         </div>
         <div className="input-wrapper">
           <p>Zoom</p>
-          <div onDoubleClick={resetZoom} onTouchStart={dtZoom}>
+          <div>
             <ReactSlider
               className="customSlider"
               thumbClassName="customSlider-thumb"
@@ -204,6 +180,7 @@ function Controls({
               onChange={(val) => setImageZoom(val)}
             />
           </div>
+          {imageZoom !== 1 && <button className="reset-btn" onClick={() => setImageZoom(1)} aria-label="Reset">&#x21A9;</button>}
         </div>
       </div>
 
