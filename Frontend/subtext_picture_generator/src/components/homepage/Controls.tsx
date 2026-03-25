@@ -22,6 +22,8 @@ type Props = {
   setImagePositionX: (val: number) => void;
   imagePositionY: number;
   setImagePositionY: (val: number) => void;
+  imageZoom: number;
+  setImageZoom: (val: number) => void;
 };
 
 function Controls({
@@ -39,6 +41,8 @@ function Controls({
   setImagePositionX,
   imagePositionY,
   setImagePositionY,
+  imageZoom,
+  setImageZoom,
 }: Readonly<Props>) {
   return (
     <div id="controls">
@@ -155,6 +159,21 @@ function Controls({
               step={1}
               value={imagePositionY}
               onChange={(val) => setImagePositionY(val)}
+            />
+          </div>
+        </div>
+        <div className="input-wrapper">
+          <p>Zoom</p>
+          <div onDoubleClick={() => setImageZoom(1)}>
+            <ReactSlider
+              className="customSlider"
+              thumbClassName="customSlider-thumb"
+              trackClassName="customSlider-track"
+              min={1}
+              max={3}
+              step={0.01}
+              value={imageZoom}
+              onChange={(val) => setImageZoom(val)}
             />
           </div>
         </div>

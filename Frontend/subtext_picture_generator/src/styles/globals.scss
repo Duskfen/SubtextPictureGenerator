@@ -510,12 +510,21 @@ main {
   .image-wrapper {
     flex: 1;
     min-height: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+
+    &:active {
+      cursor: grabbing;
+    }
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center center;
+      pointer-events: none;
+      user-select: none;
     }
   }
 }

@@ -32,6 +32,79 @@ export default function Home() {
   const [showArticleTease, setShowArticleTease] = useState(true);
   const [imagePositionX, setImagePositionX] = useState(50);
   const [imagePositionY, setImagePositionY] = useState(50);
+  const [imageZoom, setImageZoom] = useState(1);
+
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
+  const pinchState = useRef<{ startDist: number; startZoom: number } | null>(null);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return; // let touch handlers deal with touch
+    e.preventDefault();
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    dragState.current = { startX: e.clientX, startY: e.clientY, startPosX: imagePositionX, startPosY: imagePositionY };
+  }, [imagePositionX, imagePositionY]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current) return;
+    const wrapper = imageWrapperRef.current;
+    if (!wrapper) return;
+    const dx = ((e.clientX - dragState.current.startX) / wrapper.offsetWidth) * -100;
+    const dy = ((e.clientY - dragState.current.startY) / wrapper.offsetHeight) * -100;
+    setImagePositionX(Math.min(100, Math.max(0, dragState.current.startPosX + dx)));
+    setImagePositionY(Math.min(100, Math.max(0, dragState.current.startPosY + dy)));
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    dragState.current = null;
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    setImageZoom((z) => Math.min(3, Math.max(1, z - e.deltaY * 0.002)));
+  }, []);
+
+  const getTouchDist = (touches: React.TouchList) => {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      pinchState.current = { startDist: getTouchDist(e.touches), startZoom: imageZoom };
+      dragState.current = null;
+    } else if (e.touches.length === 1) {
+      dragState.current = {
+        startX: e.touches[0].clientX,
+        startY: e.touches[0].clientY,
+        startPosX: imagePositionX,
+        startPosY: imagePositionY,
+      };
+    }
+  }, [imagePositionX, imagePositionY, imageZoom]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    const wrapper = imageWrapperRef.current;
+    if (!wrapper) return;
+
+    if (e.touches.length === 2 && pinchState.current) {
+      const dist = getTouchDist(e.touches);
+      const scale = dist / pinchState.current.startDist;
+      setImageZoom(Math.min(3, Math.max(1, pinchState.current.startZoom * scale)));
+    } else if (e.touches.length === 1 && dragState.current) {
+      const dx = ((e.touches[0].clientX - dragState.current.startX) / wrapper.offsetWidth) * -100;
+      const dy = ((e.touches[0].clientY - dragState.current.startY) / wrapper.offsetHeight) * -100;
+      setImagePositionX(Math.min(100, Math.max(0, dragState.current.startPosX + dx)));
+      setImagePositionY(Math.min(100, Math.max(0, dragState.current.startPosY + dy)));
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    dragState.current = null;
+    pinchState.current = null;
+  }, []);
 
   const downloadWaitTime = useRef(500);
 
@@ -232,11 +305,26 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="image-wrapper">
+                <div
+                  className="image-wrapper"
+                  ref={imageWrapperRef}
+                  onPointerDown={handlePointerDown}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={handlePointerUp}
+                  onPointerCancel={handlePointerUp}
+                  onWheel={handleWheel}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
                   <img
                     src={article.picture.src}
                     alt="Headline image of the Article"
-                    style={{ objectPosition: `${imagePositionX}% ${imagePositionY}%` }}
+                    style={{
+                      objectPosition: `${imagePositionX}% ${imagePositionY}%`,
+                      transform: `scale(${imageZoom})`,
+                      transformOrigin: `${imagePositionX}% ${imagePositionY}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -281,6 +369,8 @@ export default function Home() {
             setImagePositionX={setImagePositionX}
             imagePositionY={imagePositionY}
             setImagePositionY={setImagePositionY}
+            imageZoom={imageZoom}
+            setImageZoom={setImageZoom}
           />
         </div>
       )}
